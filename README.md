@@ -3,4 +3,4 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/d575f795153d8c37a66f/maintainability)](https://codeclimate.com/github/ElenaManukyan/frontend-project-11/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/d575f795153d8c37a66f/test_coverage)](https://codeclimate.com/github/ElenaManukyan/frontend-project-11/test_coverage)
 ### Link to website:
-https://frontend-project-11-chi-snowy.vercel.app/
+[https://frontend-project-11-chi-snowy.vercel.app/](https://frontend-project-11-delta-brown.vercel.app/)
