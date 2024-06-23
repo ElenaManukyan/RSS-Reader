@@ -35,48 +35,12 @@ module.exports = {
         use: 'file-loader',
       },
     ],
-    /*
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-          },
-        },
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
-      },
-      {
-        test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
-      },
-      {
-        test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        type: 'asset/inline',
-      },
-      {
-        test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-        type: 'asset/resource',
-      },
-    ],
-    */
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.html',
     }),
   ],
-  /*
-  output: {
-    clean: true,
-  },
-  */
-  //mode: 'development',
   devServer: {
     static: {
       directory: path.resolve(__dirname, 'dist'),
