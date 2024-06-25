@@ -7,10 +7,11 @@ import onChange from 'on-change';
 const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
 
 const schema = yup.object().shape({
-  rssLink: yup.string().matches(regex, 'Ссылка должна быть валидным URL').required(),
+  url: yup.string().matches(regex, 'Ссылка должна быть валидным URL').required(),
 });
 
 const validate = (fields) => {
+  console.log(`fields= ${JSON.stringify(fields)}`);
   try {
     schema.validateSync(fields, { abortEarly: false });
     return {};
@@ -19,7 +20,6 @@ const validate = (fields) => {
   }
 };
 
-//function validation() {
   const state = {
     rssForm: {
       stateForm: 'filling',
@@ -27,10 +27,10 @@ const validate = (fields) => {
       errors: {},
       data: {
         fields: {
-          rssLink: '',
+          url: '',
         },
         touchedFields: {
-          rssLink: false,
+          url: false,
         },
       },
     },
@@ -42,14 +42,14 @@ const validate = (fields) => {
       errorMessage.textContent = '';
     }
 
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+
     Object.keys(errors).forEach((field) => {
       const input = document.querySelector('#url-input');
       if (state.rssForm.data.touchedFields[field]) {
         const errorP = document.querySelector('.feedback');
-        if (errorP) {
           errorP.textContent = 'Ссылка должна быть валидным URL';
           input.classList.add('is-invalid');
-        }
       } else if (input) {
         const errorP = document.querySelector('.feedback');
         if (errorP) {
@@ -81,13 +81,10 @@ const validate = (fields) => {
 
   const handler = (event) => {
     const { name, value } = event.target;
-
     watchedState.rssForm.data.fields[name] = value;
     watchedState.rssForm.data.touchedFields[name] = true;
-
     const errors = validate(watchedState.rssForm.data.fields);
     watchedState.rssForm.errors = errors;
-
     if (Object.keys(errors).length === 0) {
       watchedState.rssForm.isValid = true;
       event.target.classList.remove('is-invalid');
@@ -99,16 +96,10 @@ const validate = (fields) => {
 
   const rssInput = document.querySelector('#url-input');
   rssInput.addEventListener('input', handler);
+
   
   const rssForm = document.querySelector('.rss-form');
   rssForm.addEventListener('submit', (event) => {
     event.preventDefault();
     handler(event);
   });
-
-
-  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
-
-//}
-
-//validation();
