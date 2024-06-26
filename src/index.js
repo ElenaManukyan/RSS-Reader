@@ -11,7 +11,7 @@ const schema = yup.object().shape({
 });
 
 const validate = (fields) => {
-  console.log(`fields= ${JSON.stringify(fields)}`);
+  //console.log(`fields= ${JSON.stringify(fields)}`);
   try {
     schema.validateSync(fields, { abortEarly: false });
     return {};
@@ -41,33 +41,33 @@ const validate = (fields) => {
     if (errorMessage) {
       errorMessage.textContent = '';
     }
-
-    console.log(`state= ${JSON.stringify(state, null, 2)}`);
-
     Object.keys(errors).forEach((field) => {
       const input = document.querySelector('#url-input');
       if (state.rssForm.data.touchedFields[field]) {
         const errorP = document.querySelector('.feedback');
           errorP.textContent = 'Ссылка должна быть валидным URL';
+          errorP.classList.add('text-danger');
           input.classList.add('is-invalid');
-      } else if (input) {
+      } else {
         const errorP = document.querySelector('.feedback');
-        if (errorP) {
-          errorP.textContent = 'RSS успешно загружен';
-          input.classList.remove('is-invalid');
-        }
+        errorP.textContent = 'RSS успешно загружен';
+        input.classList.remove('is-invalid');
       }
     });
   };
 
   const clearErrors = () => {
-    const errorMessages = document.querySelectorAll('.feedback');
-    errorMessages.forEach((msg) => msg.textContent = '');
+    const errorMessage = document.querySelector('.feedback');
+    errorMessage.textContent = 'RSS успешно загружен';
     const invalidInputs = document.querySelectorAll('.is-invalid');
     invalidInputs.forEach((input) => input.classList.remove('is-invalid'));
+    
+    errorMessage.classList.remove('text-danger');
+    errorMessage.classList.add('text-success');
   };
 
   const render = () => {
+    console.log(`state.rssForm.isValid= ${state.rssForm.isValid}`);
     if (state.rssForm.isValid) {
       clearErrors();
     } else {
@@ -79,23 +79,29 @@ const validate = (fields) => {
     render();
   });
 
-  const handler = (event) => {
-    const { name, value } = event.target;
+  const handler = () => {
+    const urlInput = document.querySelector('#url-input');
+    const value = urlInput.value;
+    const name = urlInput.name;
+
     watchedState.rssForm.data.fields[name] = value;
     watchedState.rssForm.data.touchedFields[name] = true;
     const errors = validate(watchedState.rssForm.data.fields);
     watchedState.rssForm.errors = errors;
     if (Object.keys(errors).length === 0) {
       watchedState.rssForm.isValid = true;
-      event.target.classList.remove('is-invalid');
     } else {
       watchedState.rssForm.isValid = false;
     }
+
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+
   };
 
-
+/*
   const rssInput = document.querySelector('#url-input');
   rssInput.addEventListener('input', handler);
+*/
 
   
   const rssForm = document.querySelector('.rss-form');
