@@ -21,7 +21,7 @@ const clearErrors = () => {
 
     console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
-    const input = document.querySelector('#url-input');
+    //const input = document.querySelector('#url-input');
         
     /* if (state.rssForm.data.rssUrls.includes(input.value)) {
         errorP.textContent = 'RSS уже существует'; */
