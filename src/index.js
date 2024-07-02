@@ -49,12 +49,13 @@ const handler = async () => {
   watchedState.rssForm.data.touchedFields[name] = true;
   const errors = await validate(watchedState.rssForm.data.fields);
   watchedState.rssForm.errors = errors;
-  if (Object.keys(errors).length === 0 && !watchedState.rssForm.data.rssUrls.includes(value)) {
+
+  console.log(`state.rssForm.data.rssUrls.includes(value)= ${state.rssForm.data.rssUrls.includes(value)}`);
+
+  if (Object.keys(errors).length === 0 && !state.rssForm.data.rssUrls.includes(value)) {
       watchedState.rssForm.data.rssUrls.push(value);
       watchedState.rssForm.isValid = true;
-  } /* else if (watchedState.rssForm.data.rssUrls.includes(value)) {
-      watchedState.rssForm.isValid = false;
-  } */ else {
+  } else if (state.rssForm.data.rssUrls.includes(value)) {
     watchedState.rssForm.isValid = false;
   }
 };

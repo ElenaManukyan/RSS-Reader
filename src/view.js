@@ -9,18 +9,12 @@ const renderErrors = (errors) => {
             errorP.textContent = 'RSS уже существует';
         }
         const errorP = document.querySelector('.feedback');
-        
-        /* if (state.rssForm.data.rssUrls.includes(input.value)) {
-            errorP.textContent = 'RSS уже существует';
-        } */
           errorP.textContent = 'Ссылка должна быть валидным URL';
           errorP.classList.remove('text-success');
           errorP.classList.add('text-danger');
           input.classList.add('is-invalid');
       } 
-    });
-    //const errorMessage = document.querySelector('.feedback');
-    
+    });    
   };
 
 const clearErrors = () => {
@@ -33,7 +27,7 @@ const clearErrors = () => {
         errorP.textContent = 'RSS уже существует'; */
 
 
-    if (state.rssForm.data.rssUrls.includes(input.value)) {
+    //if (!state.rssForm.data.rssUrls.includes(input.value)) {
         const errorMessage = document.querySelector('.feedback');
         errorMessage.textContent = 'RSS успешно загружен';
         const invalidInputs = document.querySelectorAll('.is-invalid');
@@ -44,14 +38,21 @@ const clearErrors = () => {
         const urlInput = document.querySelector('#url-input');
         urlInput.value = '';
         urlInput.focus();
-    } else {
+   // } else {
+   /*
         const errorMessage = document.querySelector('.feedback');
         errorMessage.textContent = 'RSS уже существует';
-    }
+        */
+    //}
 };
 
 const render = () => {
     if (state.rssForm.isValid) {
+        const input = document.querySelector('#url-input');
+        if (state.rssForm.data.rssUrls.includes(input.value)) {
+            const errorMessage = document.querySelector('.feedback');
+            errorMessage.textContent = 'RSS уже существует';
+        }
         clearErrors();
     } else {
         renderErrors(state.rssForm.errors);
