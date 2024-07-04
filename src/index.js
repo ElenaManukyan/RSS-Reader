@@ -37,32 +37,25 @@ const validate = async (fields, rssUrls) => {
     await schema.validate(fields, { abortEarly: false });
     return {};
   } catch (e) {
-    console.log(`Validation errors = ${e}`);
     return keyBy(e.inner, 'path');
   }
 };
 
-const watchedState = onChange(state, (path) => {
-  console.log(`State changed: ${path}`);
+const watchedState = onChange(state, () => {
   render();
 });
 
 const handler = async () => {
-
-  console.log('Handler triggered');
-  console.log(`state before processing= ${JSON.stringify(state, null, 2)}`);
-
   const urlInput = document.querySelector('#url-input');
   const value = urlInput.value;
   const name = urlInput.name;
   watchedState.rssForm.data.fields[name] = value;
   watchedState.rssForm.data.touchedFields[name] = true;
-
-  console.log(`Fields before validation: ${JSON.stringify(watchedState.rssForm.data.fields, null, 2)}`);
-  console.log(`RSS URLs before validation: ${JSON.stringify(watchedState.rssForm.data.rssUrls, null, 2)}`);
-
   const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
   watchedState.rssForm.errors = errors;
+
+  console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  console.log(`Object.keys(errors).length= ${Object.keys(errors).length}`);
 
   if (Object.keys(errors).length === 0) {
       watchedState.rssForm.data.rssUrls.push(value);
@@ -70,7 +63,6 @@ const handler = async () => {
   } else {
     watchedState.rssForm.isValid = false;
   }
-  console.log(`state after processing = ${JSON.stringify(state, null, 2)}`);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
