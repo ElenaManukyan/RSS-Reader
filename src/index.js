@@ -4,10 +4,13 @@ import 'bootstrap';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import { render } from './view.js';
+import i18n from 'i18next';
+import resources from './locales.js';
 
 const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
 
 const state = {
+  currentLocale: 'en',
   rssForm: {
     stateForm: 'filling',
     isValid: false,
@@ -23,6 +26,14 @@ const state = {
     },
   },
 };
+
+// Locales
+const i18nextInstance = i18n.createInstance();
+  await i18nextInstance.init({
+    lng: 'ru',
+    debug: true,
+    resources,
+  });
 
 const createSchema = (rssUrls) => yup.object().shape({
   url: yup.string()
@@ -72,6 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
     handler();
   });
 });
-  
+
+
+// Locales
+function init() {
+  const h1RuName = document.querySelector('.display-3');
+  h1RuName.textContent = i18nextInstance.t('h1RuName');
+}
+
+init();
 
 export default state;
