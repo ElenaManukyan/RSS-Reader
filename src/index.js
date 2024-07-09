@@ -37,8 +37,8 @@ const i18nextInstance = i18n.createInstance();
 
 const createSchema = (rssUrls) => yup.object().shape({
   url: yup.string()
-  .notOneOf(rssUrls, 'RSS уже существует')
-  .matches(regex, 'Ссылка должна быть валидным URL')
+  .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`)
+  .matches(regex, `${i18nextInstance.t('matches')}`)
   .required(),
 });
 
@@ -65,8 +65,8 @@ const handler = async () => {
   const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
   watchedState.rssForm.errors = errors;
 
-  console.log(`state= ${JSON.stringify(state, null, 2)}`);
-  console.log(`Object.keys(errors).length= ${Object.keys(errors).length}`);
+  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  //console.log(`Object.keys(errors).length= ${Object.keys(errors).length}`);
 
   if (Object.keys(errors).length === 0) {
       watchedState.rssForm.data.rssUrls.push(value);
@@ -86,11 +86,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Locales
-function init() {
+function appendText() {
   const h1RuName = document.querySelector('.display-3');
   h1RuName.textContent = i18nextInstance.t('h1RuName');
+  const leadP = document.querySelector('.lead');
+  leadP.textContent = i18nextInstance.t('leadP');
+  const formFloatingDivLabel = document.querySelector('.form-floating label');
+  formFloatingDivLabel.textContent = i18nextInstance.t('formFloatingDivLabel');
+  const textMutedP = document.querySelector('.text-muted');
+  textMutedP.textContent = i18nextInstance.t('textMutedP');
+  const btn = document.querySelector('[aria-label="add"]');
+  btn.textContent = i18nextInstance.t('btn');
+  const textCenter = document.querySelector('.text-center');
+  textCenter.textContent = i18nextInstance.t('textCenter');
+  const textCenterA = document.createElement('a');
+  textCenterA.setAttribute('href', '');
+  textCenterA.setAttribute('target', '_blank');
+  textCenterA.textContent = i18nextInstance.t('textCenterA');
+  textCenter.appendChild(textCenterA);
 }
 
-init();
+appendText();
 
 export default state;
