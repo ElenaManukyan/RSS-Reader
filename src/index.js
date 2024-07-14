@@ -6,6 +6,7 @@ import onChange from 'on-change';
 import { render } from './view.js';
 import i18n from 'i18next';
 import resources from './locales.js';
+import axios from 'axios';
 
 const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
 
@@ -76,27 +77,26 @@ const handler = async () => {
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  const rssForm = document.querySelector('.rss-form');
-  rssForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    handler();
-  });
-});
+
 
 
 // Locales
 function appendText() {
   const h1RuName = document.querySelector('.display-3');
   h1RuName.textContent = i18nextInstance.t('h1RuName');
+
   const leadP = document.querySelector('.lead');
   leadP.textContent = i18nextInstance.t('leadP');
+
   const formFloatingDivLabel = document.querySelector('.form-floating label');
   formFloatingDivLabel.textContent = i18nextInstance.t('formFloatingDivLabel');
+  
   const textMutedP = document.querySelector('.text-muted');
   textMutedP.textContent = i18nextInstance.t('textMutedP');
+  
   const btn = document.querySelector('[aria-label="add"]');
   btn.textContent = i18nextInstance.t('btn');
+  
   const textCenter = document.querySelector('.text-center');
   textCenter.textContent = i18nextInstance.t('textCenter');
   const textCenterA = document.createElement('a');
@@ -105,7 +105,182 @@ function appendText() {
   textCenterA.textContent = i18nextInstance.t('textCenterA');
   textCenter.appendChild(textCenterA);
 }
-
 appendText();
+
+// Get RSS stream
+const getRSS = async () => {
+  try {
+   const response = await axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(`${state.rssForm.data.fields.url}`)}`);
+   
+   if (!response.data) {
+      throw new Error('Не удалось получить XML-данные');
+   }
+   
+   const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
+    const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
+    const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
+    const items = xmlDoc.querySelectorAll('item');
+
+    const rssData = [];
+
+    let itemsId = 0;
+
+    rssData.push({ itemsId, mainTitle });
+    itemsId += 1;
+    rssData.push({ itemsId, mainDescription });
+    itemsId += 1;
+
+    items.forEach((item) => {
+      const title = item.querySelector('title').textContent;
+      const description = item.querySelector('description').textContent;
+      const link = item.querySelector('link').textContent;
+      rssData.push({ itemsId, title, description, link });
+      itemsId += 1;
+    });
+    
+    return rssData;
+  } catch (error) {
+    console.error('Ошибка:', error);
+    return null;
+  } 
+}
+
+
+// Render RSS lists
+function renderRssLists(rsses) {
+  const divCard = document.createElement('div');
+  divCard.classList.add('card', 'border-0');
+
+  const divCardBody = document.createElement('div');
+  divCardBody.classList.add('card-body');
+
+  const divCardBodyH2 = document.createElement('h2');
+  divCardBodyH2.classList.add('card-title', 'h4');
+  divCardBodyH2.textContent = 'Посты';
+
+  divCardBody.appendChild(divCardBodyH2);
+
+  const divCardUl = document.createElement('ul');
+  divCardUl.classList.add('list-group', 'border-0', 'rounded-0');
+
+  console.log(`rsses= ${JSON.stringify(rsses, null, 2)}`);
+
+  for (let i = rsses.length - 1; i > 2; i -= 1) {
+
+    //console.log('Cycle is working!' + ` - i = ${i}`);
+
+    const rss = rsses[i];
+
+    const li = document.createElement('li');
+    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+    
+    const a = document.createElement('a');
+    a.setAttribute('href', `${rss.link}`);
+    a.classList.add('fw-bold');
+    a.setAttribute('data-id', `${rss.itemsId}`);
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+    a.textContent = `${rss.title}`;
+
+
+    //document.querySelector('.modal-title').textContent = `${rss.title}`;
+    //document.querySelector('.modal-body').textContent = `${rss.description}`;
+
+    const button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+    button.setAttribute('data-id', `${rss.itemsId}`);
+    button.setAttribute('data-bs-toggle', 'modal');
+    button.setAttribute('data-bs-target', '#modal');
+    button.textContent = 'Просмотр';
+
+    li.appendChild(a);
+    li.appendChild(button);
+    divCardUl.appendChild(li);
+  }
+  divCard.appendChild(divCardBody);
+  divCard.appendChild(divCardUl);
+  document.querySelector('.posts').appendChild(divCard);
+  
+
+  // Add feeds
+  const divFeeds = document.querySelector('.feeds');
+
+  const divFeedsCard = document.createElement('div');
+  divFeedsCard.classList.add('card', 'border-0');
+
+  const divCardBody2 = document.createElement('div');
+  divCardBody2.classList.add('card-body');
+
+  const divCardBody2H2 = document.createElement('h2');
+  divCardBody2H2.classList.add('card-title', 'h4');
+  divCardBody2H2.textContent = 'Фиды';
+
+  divCardBody2.appendChild(divCardBody2H2);
+
+  const ulFeeds = document.createElement('ul');
+  ulFeeds.classList.add('list-group', 'border-0', 'rounded-0');
+
+  const liFeeds = document.createElement('li');
+  liFeeds.classList.add('list-group-item', 'border-0', 'border-end-0');
+
+  const h3Feeds = document.createElement('h3');
+  h3Feeds.classList.add('h6', 'm-0');
+  h3Feeds.textContent = rsses[0].mainTitle;
+
+  // console.log(`rsses[0]= ${JSON.stringify(rsses[0], null, 2)}`);
+
+  const pFeeds = document.createElement('p');
+  pFeeds.classList.add('m-0', 'small', 'text-black-50');
+  pFeeds.textContent = rsses[1].mainDescription;
+
+  liFeeds.append(h3Feeds, pFeeds);
+  ulFeeds.appendChild(liFeeds);
+  divFeedsCard.append(divCardBody2, ulFeeds);
+  divFeeds.appendChild(divFeedsCard);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const rssForm = document.querySelector('.rss-form');
+  rssForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    handler();
+    getRSS()
+      .then((rssData) => {
+        if (rssData) {
+          renderRssLists(rssData);
+        } else {
+          console.log('Не удалось получить данные RSS');
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка при получении RSS:', error);
+      });
+
+      
+    
+    //console.log(`getRss= ${JSON.stringify(getRss, null, 2)}`);
+
+    // renderRssLists(getRss);
+  });
+});
+
+const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+      //console.log(`modalButtons= ${JSON.stringify(modalButtons, null, 2)}`);
+
+      modalButtons.forEach((modalButton) => {
+        modalButton.addEventListener('click', function(event) {
+          //document.querySelector('.modal-title').textContent = `${rss.title}`;
+          //document.querySelector('.modal-body').textContent = `${rss.description}`;
+
+          console.log('Button is clicked!');
+          console.log(`event.dataId= ${event.dataId}`);
+        });
+      });
+
+
+
+//document.querySelector('[aria-label="add"]').addEventListener('click', getRSS);
 
 export default state;
