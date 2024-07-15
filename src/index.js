@@ -107,10 +107,22 @@ function appendText() {
 }
 appendText();
 
+
+const getUrlWithProxy = (url) => {
+  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  urlWithProxy.searchParams.set('url', url);
+  return urlWithProxy.toString();
+};
+
+
 // Get RSS stream
 const getRSS = async () => {
   try {
-   const response = await axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(`${state.rssForm.data.fields.url}`)}`);
+
+    //console.log(`getUrlWithProxy(state.rssForm.data.fields.url)= ${getUrlWithProxy(state.rssForm.data.fields.url)}`);
+
+   const response = await axios.get(getUrlWithProxy(state.rssForm.data.fields.url));
    
    if (!response.data) {
       throw new Error('Не удалось получить XML-данные');
