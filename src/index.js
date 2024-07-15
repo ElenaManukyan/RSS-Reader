@@ -164,7 +164,7 @@ function renderRssLists(rsses) {
   const divCardUl = document.createElement('ul');
   divCardUl.classList.add('list-group', 'border-0', 'rounded-0');
 
-  console.log(`rsses= ${JSON.stringify(rsses, null, 2)}`);
+  //console.log(`rsses= ${JSON.stringify(rsses, null, 2)}`);
 
   for (let i = rsses.length - 1; i > 2; i -= 1) {
 
@@ -241,6 +241,7 @@ function renderRssLists(rsses) {
   divFeeds.appendChild(divFeedsCard);
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
   const rssForm = document.querySelector('.rss-form');
   rssForm.addEventListener('submit', (event) => {
@@ -257,30 +258,34 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch((error) => {
         console.error('Ошибка при получении RSS:', error);
       });
-
-      
-    
-    //console.log(`getRss= ${JSON.stringify(getRss, null, 2)}`);
-
-    // renderRssLists(getRss);
   });
 });
 
-const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
-      //console.log(`modalButtons= ${JSON.stringify(modalButtons, null, 2)}`);
 
-      modalButtons.forEach((modalButton) => {
-        modalButton.addEventListener('click', function(event) {
-          //document.querySelector('.modal-title').textContent = `${rss.title}`;
-          //document.querySelector('.modal-body').textContent = `${rss.description}`;
+document.querySelector('.posts').addEventListener('click', (event) => {
+  if (event.target.classList.contains('btn-sm')) {
+    const buttonId = Number(event.target.getAttribute('data-id'));
+    console.log(`Кнопка с id ${buttonId} нажата`);
 
-          console.log('Button is clicked!');
-          console.log(`event.dataId= ${event.dataId}`);
-        });
-      });
+    getRSS().then((rssData) => {
+      if (rssData) {
+        //console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
+        const rssDataFiltered = (rssData.filter((item) => item.itemsId === buttonId))[0];
+        console.log(`rssDataFiltered= ${JSON.stringify(rssDataFiltered, null, 2)}`);
+        //console.log(`rssDataFiltered.title= ${rssDataFiltered.title}`);
+        document.querySelector('.modal-title').textContent = rssDataFiltered.title;
+        document.querySelector('.modal-body').textContent = rssDataFiltered.description;
+        document.querySelector('.full-article').setAttribute('href', `${rssDataFiltered.link}`);
+      } else {
+        console.log('Не удалось получить данные RSS');
+      }
+    }).catch((error) => {
+      console.error('Ошибка поиска нужной информации по id:', error);
+    });
+  }
+});
 
 
 
-//document.querySelector('[aria-label="add"]').addEventListener('click', getRSS);
 
 export default state;
