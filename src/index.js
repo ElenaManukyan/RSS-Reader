@@ -18,12 +18,13 @@ const state = {
     errors: {},
     data: {
       fields: {
-        url: '',
+        activeUrl: '',
       },
       touchedFields: {
         url: false,
       },
       rssUrls: [],
+      activeRssUrlsData: {},
     },
   },
 };
@@ -37,7 +38,7 @@ const i18nextInstance = i18n.createInstance();
   });
 
 const createSchema = (rssUrls) => yup.object().shape({
-  url: yup.string()
+  activeUrl: yup.string()
   .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`)
   .matches(regex, `${i18nextInstance.t('matches')}`)
   .required(),
@@ -61,9 +62,15 @@ const handler = async () => {
   const urlInput = document.querySelector('#url-input');
   const value = urlInput.value;
   const name = urlInput.name;
-  watchedState.rssForm.data.fields[name] = value;
+
+  //console.log(`name= ${name}`);
+
+  watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
+
+  //console.log(`errors= ${JSON.stringify(errors, null, 2)}`);
+
   watchedState.rssForm.errors = errors;
 
   //console.log(`state= ${JSON.stringify(state, null, 2)}`);
@@ -117,12 +124,13 @@ const getUrlWithProxy = (url) => {
 
 
 // Get RSS stream
-const getRSS = async () => {
+const getRSS = async (url) => {
   try {
 
     //console.log(`getUrlWithProxy(state.rssForm.data.fields.url)= ${getUrlWithProxy(state.rssForm.data.fields.url)}`);
 
-   const response = await axios.get(getUrlWithProxy(state.rssForm.data.fields.url));
+   //const response = await axios.get(getUrlWithProxy(state.rssForm.data.fields.url));
+   const response = await axios.get(getUrlWithProxy(url));
    
    if (!response.data) {
       throw new Error('Не удалось получить XML-данные');
@@ -161,107 +169,124 @@ const getRSS = async () => {
 
 // Render RSS lists
 function renderRssLists(rsses) {
-  const divCard = document.createElement('div');
-  divCard.classList.add('card', 'border-0');
 
-  const divCardBody = document.createElement('div');
-  divCardBody.classList.add('card-body');
-
-  const divCardBodyH2 = document.createElement('h2');
-  divCardBodyH2.classList.add('card-title', 'h4');
-  divCardBodyH2.textContent = 'Посты';
-
-  divCardBody.appendChild(divCardBodyH2);
-
-  const divCardUl = document.createElement('ul');
-  divCardUl.classList.add('list-group', 'border-0', 'rounded-0');
-
-  //console.log(`rsses= ${JSON.stringify(rsses, null, 2)}`);
-
-  for (let i = rsses.length - 1; i > 2; i -= 1) {
-
-    //console.log('Cycle is working!' + ` - i = ${i}`);
-
-    const rss = rsses[i];
-
-    const li = document.createElement('li');
-    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-    
-    const a = document.createElement('a');
-    a.setAttribute('href', `${rss.link}`);
-    a.classList.add('fw-bold');
-    a.setAttribute('data-id', `${rss.itemsId}`);
-    a.setAttribute('target', '_blank');
-    a.setAttribute('rel', 'noopener noreferrer');
-    a.textContent = `${rss.title}`;
-
-
-    //document.querySelector('.modal-title').textContent = `${rss.title}`;
-    //document.querySelector('.modal-body').textContent = `${rss.description}`;
-
-    const button = document.createElement('button');
-    button.setAttribute('type', 'button');
-    button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-    button.setAttribute('data-id', `${rss.itemsId}`);
-    button.setAttribute('data-bs-toggle', 'modal');
-    button.setAttribute('data-bs-target', '#modal');
-    button.textContent = 'Просмотр';
-
-    li.appendChild(a);
-    li.appendChild(button);
-    divCardUl.appendChild(li);
-  }
-  divCard.appendChild(divCardBody);
-  divCard.appendChild(divCardUl);
-  document.querySelector('.posts').appendChild(divCard);
   
 
-  // Add feeds
-  const divFeeds = document.querySelector('.feeds');
 
-  const divFeedsCard = document.createElement('div');
-  divFeedsCard.classList.add('card', 'border-0');
+  if (state.rssForm.isValid) {
 
-  const divCardBody2 = document.createElement('div');
-  divCardBody2.classList.add('card-body');
+    
 
-  const divCardBody2H2 = document.createElement('h2');
-  divCardBody2H2.classList.add('card-title', 'h4');
-  divCardBody2H2.textContent = 'Фиды';
+    const divCard = document.createElement('div');
+    divCard.classList.add('card', 'border-0');
 
-  divCardBody2.appendChild(divCardBody2H2);
+    const divCardBody = document.createElement('div');
+    divCardBody.classList.add('card-body');
 
-  const ulFeeds = document.createElement('ul');
-  ulFeeds.classList.add('list-group', 'border-0', 'rounded-0');
+    const divCardBodyH2 = document.createElement('h2');
+    divCardBodyH2.classList.add('card-title', 'h4');
+    divCardBodyH2.textContent = 'Посты';
 
-  const liFeeds = document.createElement('li');
-  liFeeds.classList.add('list-group-item', 'border-0', 'border-end-0');
+    divCardBody.appendChild(divCardBodyH2);
 
-  const h3Feeds = document.createElement('h3');
-  h3Feeds.classList.add('h6', 'm-0');
-  h3Feeds.textContent = rsses[0].mainTitle;
+    const divCardUl = document.createElement('ul');
+    divCardUl.classList.add('list-group', 'border-0', 'rounded-0');
 
-  // console.log(`rsses[0]= ${JSON.stringify(rsses[0], null, 2)}`);
+    //console.log(`rsses= ${JSON.stringify(rsses, null, 2)}`);
 
-  const pFeeds = document.createElement('p');
-  pFeeds.classList.add('m-0', 'small', 'text-black-50');
-  pFeeds.textContent = rsses[1].mainDescription;
+    for (let i = rsses.length - 1; i > 2; i -= 1) {
 
-  liFeeds.append(h3Feeds, pFeeds);
-  ulFeeds.appendChild(liFeeds);
-  divFeedsCard.append(divCardBody2, ulFeeds);
-  divFeeds.appendChild(divFeedsCard);
+      //console.log('Cycle is working!' + ` - i = ${i}`);
+
+      const rss = rsses[i];
+
+      const li = document.createElement('li');
+      li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
+      
+      const a = document.createElement('a');
+      a.setAttribute('href', `${rss.link}`);
+      a.classList.add('fw-bold');
+      a.setAttribute('data-id', `${rss.itemsId}`);
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      a.textContent = `${rss.title}`;
+
+
+      //document.querySelector('.modal-title').textContent = `${rss.title}`;
+      //document.querySelector('.modal-body').textContent = `${rss.description}`;
+
+      const button = document.createElement('button');
+      button.setAttribute('type', 'button');
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+      button.setAttribute('data-id', `${rss.itemsId}`);
+      button.setAttribute('data-bs-toggle', 'modal');
+      button.setAttribute('data-bs-target', '#modal');
+      button.textContent = 'Просмотр';
+
+      li.appendChild(a);
+      li.appendChild(button);
+      divCardUl.appendChild(li);
+    }
+    divCard.appendChild(divCardBody);
+    divCard.appendChild(divCardUl);
+    document.querySelector('.posts').appendChild(divCard);
+    
+
+    // Add feeds
+    const divFeeds = document.querySelector('.feeds');
+
+    const divFeedsCard = document.createElement('div');
+    divFeedsCard.classList.add('card', 'border-0');
+
+    const divCardBody2 = document.createElement('div');
+    divCardBody2.classList.add('card-body');
+
+    const divCardBody2H2 = document.createElement('h2');
+    divCardBody2H2.classList.add('card-title', 'h4');
+    divCardBody2H2.textContent = 'Фиды';
+
+    divCardBody2.appendChild(divCardBody2H2);
+
+    const ulFeeds = document.createElement('ul');
+    ulFeeds.classList.add('list-group', 'border-0', 'rounded-0');
+
+    const liFeeds = document.createElement('li');
+    liFeeds.classList.add('list-group-item', 'border-0', 'border-end-0');
+
+    const h3Feeds = document.createElement('h3');
+    h3Feeds.classList.add('h6', 'm-0');
+    h3Feeds.textContent = rsses[0].mainTitle;
+
+    // console.log(`rsses[0]= ${JSON.stringify(rsses[0], null, 2)}`);
+
+    const pFeeds = document.createElement('p');
+    pFeeds.classList.add('m-0', 'small', 'text-black-50');
+    pFeeds.textContent = rsses[1].mainDescription;
+
+    liFeeds.append(h3Feeds, pFeeds);
+    ulFeeds.appendChild(liFeeds);
+    divFeedsCard.append(divCardBody2, ulFeeds);
+    divFeeds.appendChild(divFeedsCard);
+  }
+
+  console.log('renderRssLists is working!');
+  console.log(`state= ${JSON.stringify(state, null, 2)}`);
+
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
   const rssForm = document.querySelector('.rss-form');
   rssForm.addEventListener('submit', (event) => {
     event.preventDefault();
     handler();
-    getRSS()
+    getRSS(state.rssForm.data.fields.activeUrl)
       .then((rssData) => {
         if (rssData) {
+
+
+          state.rssForm.data.activeRssUrlsData = rssData;
+
+
           renderRssLists(rssData);
         } else {
           console.log('Не удалось получить данные RSS');
@@ -270,6 +295,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch((error) => {
         console.error('Ошибка при получении RSS:', error);
       });
+
+      // console.log(`state= ${JSON.stringify(state, null, 2)}`);
+
   });
 });
 
@@ -277,13 +305,14 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelector('.posts').addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const buttonId = Number(event.target.getAttribute('data-id'));
-    console.log(`Кнопка с id ${buttonId} нажата`);
+    //console.log(`Кнопка с id ${buttonId} нажата`);
 
-    getRSS().then((rssData) => {
+    getRSS(state.rssForm.data.fields.activeUrl)
+    .then((rssData) => {
       if (rssData) {
         //console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
         const rssDataFiltered = (rssData.filter((item) => item.itemsId === buttonId))[0];
-        console.log(`rssDataFiltered= ${JSON.stringify(rssDataFiltered, null, 2)}`);
+        //console.log(`rssDataFiltered= ${JSON.stringify(rssDataFiltered, null, 2)}`);
         //console.log(`rssDataFiltered.title= ${rssDataFiltered.title}`);
         document.querySelector('.modal-title').textContent = rssDataFiltered.title;
         document.querySelector('.modal-body').textContent = rssDataFiltered.description;
@@ -297,6 +326,101 @@ document.querySelector('.posts').addEventListener('click', (event) => {
   }
 });
 
+
+// Функция для обработки всех новых элементов в узле
+function handleNewElements(node) {
+  return new Promise((resolve, reject) => {
+    try {
+      const res = [];
+      //node.querySelectorAll('.list-group-item').forEach(handleNewElement);
+      node.querySelectorAll('.list-group-item a').forEach((element) => {
+        // console.log('Новый элемент добавлен:', element);
+        res.push(element.href);
+      });
+      resolve(res);
+    } catch(error) {
+      reject(error);
+    }
+    
+  });
+  
+}
+
+// Проверяю каждый RSS-поток
+function checkEvenRssStream() {
+  const allRssStreams = state.rssForm.data.rssUrls;
+  //console.log(`allRssStreams= ${JSON.stringify(allRssStreams, null, 2)}`);
+  allRssStreams.forEach((RssStream) => {
+    getRSS(RssStream)
+      .then((rssData) => {
+        if (rssData) {
+          //console.log(`checkEvenRssStream rssData= ${JSON.stringify(rssData, null, 2)}`);
+          //renderRssLists(rssData);
+
+          //rssData.forEach((rss) => {
+            /*
+            if (!state.rssForm.data.activeRssUrlsData.includes(rss)) {
+              renderRssLists();
+            }
+              */
+          //});
+
+          const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
+
+          console.log(`titles= ${JSON.stringify(titles, null, 2)}`);
+
+          const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title));
+
+          console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
+
+        } else {
+          console.log('Не удалось получить данные RSS');
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка при получении RSS:', error);
+      });
+  });
+  
+}
+
+function repeat() {
+  checkEvenRssStream();
+  setTimeout(repeat, 5000);
+}
+
+repeat();
+
+
+
+// Создаю новый MutationObserver
+const observer = new MutationObserver((mutations) => {
+
+  //console.log('observer is working!');
+  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
+
+
+  mutations.forEach((mutation) => {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        handleNewElements(node)
+          .then((res) => {
+            console.log('Полученное значение res:', JSON.stringify(res, null, 2));
+            // checkEvenRssStream();
+          })
+          .catch((error) => {
+            console.error('Ошибка в handleNewElements:', error);
+          });
+      }
+    });
+  });
+});
+
+// Настраиваю и запускаю MutationObserver
+observer.observe(document.querySelector('.posts'), {
+  childList: true,
+  subtree: true
+});
 
 
 
