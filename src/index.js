@@ -63,20 +63,10 @@ const handler = async () => {
   const urlInput = document.querySelector('#url-input');
   const value = urlInput.value;
   const name = urlInput.name;
-
-  //console.log(`name= ${name}`);
-
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
-
-  //console.log(`errors= ${JSON.stringify(errors, null, 2)}`);
-
   watchedState.rssForm.errors = errors;
-
-  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
-  //console.log(`Object.keys(errors).length= ${Object.keys(errors).length}`);
-
   if (Object.keys(errors).length === 0) {
       watchedState.rssForm.data.rssUrls.push(value);
       watchedState.rssForm.isValid = true;
@@ -84,9 +74,6 @@ const handler = async () => {
     watchedState.rssForm.isValid = false;
   }
 };
-
-
-
 
 // Locales
 function appendText() {
@@ -127,10 +114,6 @@ const getUrlWithProxy = (url) => {
 // Get RSS stream
 const getRSS = async (url) => {
   try {
-
-    //console.log(`getUrlWithProxy(state.rssForm.data.fields.url)= ${getUrlWithProxy(state.rssForm.data.fields.url)}`);
-
-   //const response = await axios.get(getUrlWithProxy(state.rssForm.data.fields.url));
    const response = await axios.get(getUrlWithProxy(url));
    
    if (!response.data) {
@@ -189,15 +172,8 @@ function renderRssLists(rsses) {
 
     const divCardUl = document.createElement('ul');
     divCardUl.classList.add('list-group', 'border-0', 'rounded-0');
-
-    //console.log(`rsses= ${JSON.stringify(rsses, null, 2)}`);
-
     for (let i = rsses.length - 1; i >= 2; i -= 1) {
-
-      //console.log('Cycle is working!' + ` - i = ${i}`);
-
       const rss = rsses[i];
-
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
       
@@ -210,15 +186,10 @@ function renderRssLists(rsses) {
         a.style = 'color: #6c757d';
       }
       
-      
       a.setAttribute('data-id', `${rss.itemsId}`);
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener noreferrer');
       a.textContent = `${rss.title}`;
-
-
-      //document.querySelector('.modal-title').textContent = `${rss.title}`;
-      //document.querySelector('.modal-body').textContent = `${rss.description}`;
 
       const button = document.createElement('button');
       button.setAttribute('type', 'button');
@@ -261,9 +232,6 @@ function renderRssLists(rsses) {
     const h3Feeds = document.createElement('h3');
     h3Feeds.classList.add('h6', 'm-0');
     h3Feeds.textContent = rsses[0].mainTitle;
-
-    // console.log(`rsses[0]= ${JSON.stringify(rsses[0], null, 2)}`);
-
     const pFeeds = document.createElement('p');
     pFeeds.classList.add('m-0', 'small', 'text-black-50');
     pFeeds.textContent = rsses[1].mainDescription;
@@ -273,9 +241,8 @@ function renderRssLists(rsses) {
     divFeedsCard.append(divCardBody2, ulFeeds);
     divFeeds.appendChild(divFeedsCard);
   }
-
-  console.log('renderRssLists is working!');
-  console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  //console.log('renderRssLists is working!');
+  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
 }
 
@@ -287,11 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
     getRSS(state.rssForm.data.fields.activeUrl)
       .then((rssData) => {
         if (rssData) {
-
-
           state.rssForm.data.activeRssUrlsData = rssData;
-
-
           renderRssLists(rssData);
         } else {
           console.log('Не удалось получить данные RSS');
@@ -300,9 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch((error) => {
         console.error('Ошибка при получении RSS:', error);
       });
-
-      // console.log(`state= ${JSON.stringify(state, null, 2)}`);
-
   });
 });
 
@@ -310,17 +270,16 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelector('.posts').addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const buttonId = Number(event.target.getAttribute('data-id'));
-    console.log(`Кнопка с id ${buttonId} нажата`);
+    //console.log(`Кнопка с id ${buttonId} нажата`);
 
     const filteredPostInfo = state.rssForm.data.activeRssUrlsData.filter((item) => item.itemsId === buttonId)[0];
-    console.log(`filteredPostInfo= ${JSON.stringify(filteredPostInfo, null, 2)}`);
+    //console.log(`filteredPostInfo= ${JSON.stringify(filteredPostInfo, null, 2)}`);
     
     document.querySelector('.modal-title').textContent = filteredPostInfo.title;
     document.querySelector('.modal-body').textContent = filteredPostInfo.description;
     document.querySelector('.full-article').setAttribute('href', `${filteredPostInfo.link}`);
  
     const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(buttonId)}"]`);
-    // console.log(`clickedListElement= ${clickedListElement}`);
     clickedListElement.classList.remove('fw-bold');
     clickedListElement.classList.add('fw-normal');
     clickedListElement.style = 'color: #6c757d';
@@ -329,15 +288,12 @@ document.querySelector('.posts').addEventListener('click', (event) => {
   }
 });
 
-
 // Функция для обработки всех новых элементов в узле
 function handleNewElements(node) {
   return new Promise((resolve, reject) => {
     try {
       const res = [];
-      //node.querySelectorAll('.list-group-item').forEach(handleNewElement);
       node.querySelectorAll('.list-group-item a').forEach((element) => {
-        // console.log('Новый элемент добавлен:', element);
         res.push(element.href);
       });
       resolve(res);
@@ -352,23 +308,15 @@ function handleNewElements(node) {
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
   const allRssStreams = state.rssForm.data.rssUrls;
-  //console.log(`allRssStreams= ${JSON.stringify(allRssStreams, null, 2)}`);
   allRssStreams.forEach((RssStream) => {
     getRSS(RssStream)
       .then((rssData) => {
         if (rssData) {
-          
-
           const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
           const descriptions = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
-
-          //console.log(`titles= ${JSON.stringify(titles, null, 2)}`);
-
           const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title) && !descriptions.includes(rssData.description));
           if (filteredRssData.length > 0) {
-
-            console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
-
+            //console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
             filteredRssData.forEach((item) => {
               item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
               state.rssForm.data.activeRssUrlsData.push(item);
@@ -393,15 +341,8 @@ function repeat() {
 
 repeat();
 
-
-
 // Создаю новый MutationObserver
 const observer = new MutationObserver((mutations) => {
-
-  //console.log('observer is working!');
-  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
-
-
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
