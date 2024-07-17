@@ -314,26 +314,6 @@ document.querySelector('.posts').addEventListener('click', (event) => {
     document.querySelector('.modal-title').textContent = filteredPostInfo.title;
     document.querySelector('.modal-body').textContent = filteredPostInfo.description;
     document.querySelector('.full-article').setAttribute('href', `${filteredPostInfo.link}`);
-
-
-    /*
-    getRSS(state.rssForm.data.fields.activeUrl)
-    .then((rssData) => {
-      if (rssData) {
-        //console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
-        const rssDataFiltered = (rssData.filter((item) => item.itemsId === buttonId))[0];
-        console.log(`rssDataFiltered= ${JSON.stringify(rssDataFiltered, null, 2)}`);
-        console.log(`rssDataFiltered.title= ${rssDataFiltered.title}`);
-        document.querySelector('.modal-title').textContent = rssDataFiltered.title;
-        document.querySelector('.modal-body').textContent = rssDataFiltered.description;
-        document.querySelector('.full-article').setAttribute('href', `${rssDataFiltered.link}`);
-      } else {
-        console.log('Не удалось получить данные RSS');
-      }
-    }).catch((error) => {
-      console.error('Ошибка поиска нужной информации по id:', error);
-    });
-    */
   }
 });
 
@@ -373,10 +353,6 @@ function checkEvenRssStream() {
           //console.log(`titles= ${JSON.stringify(titles, null, 2)}`);
 
           const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title) && !descriptions.includes(rssData.description));
-
-          
-
-
           if (filteredRssData.length > 0) {
 
             console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
@@ -418,7 +394,7 @@ const observer = new MutationObserver((mutations) => {
     mutation.addedNodes.forEach((node) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         handleNewElements(node)
-          .then((res) => {
+          .then((/*res*/) => {
             //console.log('Полученное значение res:', JSON.stringify(res, null, 2));
             // checkEvenRssStream();
           })
