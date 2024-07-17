@@ -175,7 +175,8 @@ function renderRssLists(rsses) {
 
   if (state.rssForm.isValid) {
 
-    
+    document.querySelector('.posts').innerHTML = '';
+    document.querySelector('.feeds').innerHTML = '';
 
     const divCard = document.createElement('div');
     divCard.classList.add('card', 'border-0');
@@ -194,7 +195,7 @@ function renderRssLists(rsses) {
 
     //console.log(`rsses= ${JSON.stringify(rsses, null, 2)}`);
 
-    for (let i = rsses.length - 1; i > 2; i -= 1) {
+    for (let i = rsses.length - 1; i >= 2; i -= 1) {
 
       //console.log('Cycle is working!' + ` - i = ${i}`);
 
@@ -305,15 +306,24 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelector('.posts').addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const buttonId = Number(event.target.getAttribute('data-id'));
-    //console.log(`Кнопка с id ${buttonId} нажата`);
+    console.log(`Кнопка с id ${buttonId} нажата`);
 
+    const filteredPostInfo = state.rssForm.data.activeRssUrlsData.filter((item) => item.itemsId === buttonId)[0];
+    console.log(`filteredPostInfo= ${JSON.stringify(filteredPostInfo, null, 2)}`);
+    
+    document.querySelector('.modal-title').textContent = filteredPostInfo.title;
+    document.querySelector('.modal-body').textContent = filteredPostInfo.description;
+    document.querySelector('.full-article').setAttribute('href', `${filteredPostInfo.link}`);
+
+
+    /*
     getRSS(state.rssForm.data.fields.activeUrl)
     .then((rssData) => {
       if (rssData) {
         //console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
         const rssDataFiltered = (rssData.filter((item) => item.itemsId === buttonId))[0];
-        //console.log(`rssDataFiltered= ${JSON.stringify(rssDataFiltered, null, 2)}`);
-        //console.log(`rssDataFiltered.title= ${rssDataFiltered.title}`);
+        console.log(`rssDataFiltered= ${JSON.stringify(rssDataFiltered, null, 2)}`);
+        console.log(`rssDataFiltered.title= ${rssDataFiltered.title}`);
         document.querySelector('.modal-title').textContent = rssDataFiltered.title;
         document.querySelector('.modal-body').textContent = rssDataFiltered.description;
         document.querySelector('.full-article').setAttribute('href', `${rssDataFiltered.link}`);
@@ -323,6 +333,7 @@ document.querySelector('.posts').addEventListener('click', (event) => {
     }).catch((error) => {
       console.error('Ошибка поиска нужной информации по id:', error);
     });
+    */
   }
 });
 
@@ -354,25 +365,28 @@ function checkEvenRssStream() {
     getRSS(RssStream)
       .then((rssData) => {
         if (rssData) {
-          //console.log(`checkEvenRssStream rssData= ${JSON.stringify(rssData, null, 2)}`);
-          //renderRssLists(rssData);
-
-          //rssData.forEach((rss) => {
-            /*
-            if (!state.rssForm.data.activeRssUrlsData.includes(rss)) {
-              renderRssLists();
-            }
-              */
-          //});
+          
 
           const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
+          const descriptions = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
 
-          console.log(`titles= ${JSON.stringify(titles, null, 2)}`);
+          //console.log(`titles= ${JSON.stringify(titles, null, 2)}`);
 
-          const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title));
+          const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title) && !descriptions.includes(rssData.description));
 
-          console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
+          
 
+
+          if (filteredRssData.length > 0) {
+
+            console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
+
+            filteredRssData.forEach((item) => {
+              item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
+              state.rssForm.data.activeRssUrlsData.push(item);
+            });
+            renderRssLists(state.rssForm.data.activeRssUrlsData);
+          }
         } else {
           console.log('Не удалось получить данные RSS');
         }
@@ -405,7 +419,7 @@ const observer = new MutationObserver((mutations) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         handleNewElements(node)
           .then((res) => {
-            console.log('Полученное значение res:', JSON.stringify(res, null, 2));
+            //console.log('Полученное значение res:', JSON.stringify(res, null, 2));
             // checkEvenRssStream();
           })
           .catch((error) => {
