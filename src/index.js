@@ -24,6 +24,7 @@ const state = {
         url: false,
       },
       rssUrls: [],
+      readedIdsPosts: [],
       activeRssUrlsData: {},
     },
   },
@@ -169,10 +170,6 @@ const getRSS = async (url) => {
 
 // Render RSS lists
 function renderRssLists(rsses) {
-
-  
-
-
   if (state.rssForm.isValid) {
 
     document.querySelector('.posts').innerHTML = '';
@@ -206,7 +203,14 @@ function renderRssLists(rsses) {
       
       const a = document.createElement('a');
       a.setAttribute('href', `${rss.link}`);
-      a.classList.add('fw-bold');
+      
+      const aClass = state.rssForm.data.readedIdsPosts.includes(rss.itemsId) ? 'fw-normal' : 'fw-bold';
+      a.classList.add(aClass);
+      if (state.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
+        a.style = 'color: #6c757d';
+      }
+      
+      
       a.setAttribute('data-id', `${rss.itemsId}`);
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener noreferrer');
@@ -314,6 +318,14 @@ document.querySelector('.posts').addEventListener('click', (event) => {
     document.querySelector('.modal-title').textContent = filteredPostInfo.title;
     document.querySelector('.modal-body').textContent = filteredPostInfo.description;
     document.querySelector('.full-article').setAttribute('href', `${filteredPostInfo.link}`);
+ 
+    const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(buttonId)}"]`);
+    // console.log(`clickedListElement= ${clickedListElement}`);
+    clickedListElement.classList.remove('fw-bold');
+    clickedListElement.classList.add('fw-normal');
+    clickedListElement.style = 'color: #6c757d';
+
+    state.rssForm.data.readedIdsPosts.push(buttonId);
   }
 });
 
