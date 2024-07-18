@@ -147,7 +147,7 @@ const getRSS = async (url) => {
   try {
    const response = await axios.get(getUrlWithProxy(url));
 
-    console.log(`response= ${JSON.stringify(response, null, 4)}`);
+   // console.log(`response= ${JSON.stringify(response, null, 4)}`);
 
    
    if (response.status !== 200) {
@@ -156,14 +156,15 @@ const getRSS = async (url) => {
 
    const contentType = response.data.status.content_type;
 
-   console.log(`contentType= ${contentType}`);
+  // console.log(`contentType= ${contentType}`);
 
    if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
     throw new Error('Ресурс не содержит валидный RSS');
    }
 
-   
-   const parser = new DOMParser();
+  
+   if (contentType.includes('application/rss+xml') || contentType.includes('application/xml')) {
+    const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
     if (xmlDoc.getElementsByTagName('parseerror').length > 0) {
@@ -192,6 +193,10 @@ const getRSS = async (url) => {
     });
     
     return rssData;
+   }
+
+
+   
   } catch (error) {
     console.error('Ошибка:', error);
     return null;
@@ -289,8 +294,8 @@ function renderRssLists(rsses) {
     divFeedsCard.append(divCardBody2, ulFeeds);
     divFeeds.appendChild(divFeedsCard);
   }
-  console.log('renderRssLists is working!');
-  console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  //console.log('renderRssLists is working!');
+ //console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
 }
 
@@ -305,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
           state.rssForm.data.activeRssUrlsData = rssData;
           renderRssLists(rssData);
         } else {
-          console.log('Не удалось получить данные RSS');
+         // console.log('Не удалось получить данные RSS');
         }
       })
       .catch((error) => {
@@ -372,7 +377,7 @@ function checkEvenRssStream() {
             renderRssLists(state.rssForm.data.activeRssUrlsData);
           }
         } else {
-          console.log('Не удалось получить данные RSS');
+         // console.log('Не удалось получить данные RSS');
         }
       })
       .catch((error) => {
