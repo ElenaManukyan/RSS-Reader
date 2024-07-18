@@ -7,9 +7,11 @@ const renderErrors = (errors) => {
     input.classList.remove('is-invalid');
     errorP.classList.remove('text-danger', 'text-success');
 
-   if (errors.url) {  
+    // console.log(`errors= ${JSON.stringify(errors, null, 2)}`);
+
+   if (errors.activeUrl) {  
         input.classList.add('is-invalid');
-        errorP.textContent = errors.url.message;
+        errorP.textContent = errors.activeUrl.message;
         errorP.classList.add('text-danger');
     }
   };

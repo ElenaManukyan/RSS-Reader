@@ -241,8 +241,8 @@ function renderRssLists(rsses) {
     divFeedsCard.append(divCardBody2, ulFeeds);
     divFeeds.appendChild(divFeedsCard);
   }
-  //console.log('renderRssLists is working!');
-  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  console.log('renderRssLists is working!');
+  console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
 }
 
