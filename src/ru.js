@@ -10,5 +10,6 @@ export default {
         notOneOf: 'RSS уже существует',
         matches: 'Ссылка должна быть валидным URL',
         notValidRSS: 'Ресурс не содержит валидный RSS',
+        successRSS: 'RSS успешно загружен',
     },
   };

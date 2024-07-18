@@ -11,7 +11,7 @@ import axios from 'axios';
 const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
 
 const state = {
-  currentLocale: 'en',
+  currentLocale: 'ru',
   rssForm: {
     stateForm: 'filling',
     isValid: false,
@@ -25,7 +25,7 @@ const state = {
       },
       rssUrls: [],
       readedIdsPosts: [],
-      activeRssUrlsData: {},
+      activeRssUrlsData: [],
     },
   },
 };
@@ -79,6 +79,13 @@ const createSchema = (rssUrls) => yup.object().shape({
   .matches(regex, `${i18nextInstance.t('matches')}`)
   .required()
   .isRSS(i18nextInstance.t('notValidRSS')),
+  /*
+  .test({
+    name: 'success-message',
+    exclusive: true,
+    message: `${i18nextInstance.t('successRSS')}`,
+    
+  }),*/
 });
 
 const validate = async (fields, rssUrls) => {
@@ -145,7 +152,8 @@ appendText();
 // Get RSS stream
 const getRSS = async (url) => {
   try {
-   const response = await axios.get(getUrlWithProxy(url));
+    if (state.rssForm.isValid) {
+      const response = await axios.get(getUrlWithProxy(url));
 
    // console.log(`response= ${JSON.stringify(response, null, 4)}`);
 
@@ -196,6 +204,8 @@ const getRSS = async (url) => {
     });
     
     return rssData;
+    }
+   
    }
 
 
@@ -308,8 +318,11 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     handler();
     
+    //console.log(`rssForm.addEventListener('submit' is working`);
+    //console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
-    if (state.rssForm.isValid) {
+
+    //if (state.rssForm.isValid) {
       getRSS(state.rssForm.data.fields.activeUrl)
       .then((rssData) => {
         if (rssData) {
@@ -322,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch((error) => {
         console.error('Ошибка при получении RSS:', error);
       });
-    }
+    //}
 
     
   });
