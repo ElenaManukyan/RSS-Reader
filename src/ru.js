@@ -9,13 +9,6 @@ export default {
         textCenterA: 'Hexlet',
         notOneOf: 'RSS уже существует',
         matches: 'Ссылка должна быть валидным URL',
-      /*
-      langTabRu: 'Русский',
-      langTabEn: 'English',
-      clickBtnOne: '{{count}} клик',
-      clickBtnFew: '{{count}} клика',
-      clickBtnMany: '{{count}} кликов',
-      resetBtn: 'Сбросить',
-      */
+        notValidRSS: 'Ресурс не содержит валидный RSS',
     },
   };

@@ -36,13 +36,49 @@ const i18nextInstance = i18n.createInstance();
     lng: 'ru',
     debug: true,
     resources,
+});
+
+const getUrlWithProxy = (url) => {
+  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  urlWithProxy.searchParams.set('url', url);
+  return urlWithProxy.toString();
+};
+
+
+const isRSSUrl = async (url) => {
+  try {
+    const response = await axios.get(getUrlWithProxy(url));
+   const contentType = response.data.status.content_type;
+
+   if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
+    return false;
+  }
+
+  const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
+    
+    return xmlDoc.getElementsByTagName('rss').length > 0;
+  } catch (error) {
+    return false;
+  }
+};
+
+yup.addMethod(yup.string, 'isRSS', function (message) {
+  return this.test('is-rss', message, async function (value) {
+    const {path, createError} = this;
+    const valid = await isRSSUrl(value);
+    return valid || createError({ path, message });
   });
+});
+
 
 const createSchema = (rssUrls) => yup.object().shape({
   activeUrl: yup.string()
   .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`)
   .matches(regex, `${i18nextInstance.t('matches')}`)
-  .required(),
+  .required()
+  .isRSS(i18nextInstance.t('notValidRSS')),
 });
 
 const validate = async (fields, rssUrls) => {
@@ -103,25 +139,37 @@ function appendText() {
 appendText();
 
 
-const getUrlWithProxy = (url) => {
-  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
-  urlWithProxy.searchParams.set('disableCache', 'true');
-  urlWithProxy.searchParams.set('url', url);
-  return urlWithProxy.toString();
-};
+
 
 
 // Get RSS stream
 const getRSS = async (url) => {
   try {
    const response = await axios.get(getUrlWithProxy(url));
+
+    console.log(`response= ${JSON.stringify(response, null, 4)}`);
+
    
-   if (!response.data) {
-      throw new Error('Не удалось получить XML-данные');
+   if (response.status !== 200) {
+      throw new Error('Ошибка сети');
    }
+
+   const contentType = response.data.status.content_type;
+
+   console.log(`contentType= ${contentType}`);
+
+   if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
+    throw new Error('Ресурс не содержит валидный RSS');
+   }
+
    
    const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
+    
+    if (xmlDoc.getElementsByTagName('parseerror').length > 0) {
+      throw new Error('Невалидный RSS');
+    }
+    
     const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
     const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
     const items = xmlDoc.querySelectorAll('item');
