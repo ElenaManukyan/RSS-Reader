@@ -98,7 +98,12 @@ const validate = async (fields, rssUrls) => {
   }
 };
 
+
+
 const watchedState = onChange(state, () => {
+
+  console.log('onChange is working!');
+
   render();
 });
 
@@ -109,13 +114,31 @@ const handler = async () => {
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
-  watchedState.rssForm.errors = errors;
+  
+  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  //console.log(`errors of the validate func= ${JSON.stringify(errors, null, 2)}`);
+  //console.log(`Object.keys(errors).length === 0= ${Object.keys(errors).length === 0}`);
+
+  // Тут isValid почему-то не меняется
   if (Object.keys(errors).length === 0) {
+
+    //console.log('Условие для isValid работает!');
+
       watchedState.rssForm.data.rssUrls.push(value);
       watchedState.rssForm.isValid = true;
+
+      //console.log(`watchedState.rssForm.isValid после изменнения= ${watchedState.rssForm.isValid}`);
+
   } else {
     watchedState.rssForm.isValid = false;
   }
+
+  watchedState.rssForm.errors = errors;
+
+
+  render();
+
+
 };
 
 // Locales
@@ -219,7 +242,9 @@ const getRSS = async (url) => {
 
 // Render RSS lists
 function renderRssLists(rsses) {
-  if (state.rssForm.isValid) {
+  //if (state.rssForm.isValid) {
+
+    console.log('renderRssLists is working!');
 
     document.querySelector('.posts').innerHTML = '';
     document.querySelector('.feeds').innerHTML = '';
@@ -306,7 +331,7 @@ function renderRssLists(rsses) {
     ulFeeds.appendChild(liFeeds);
     divFeedsCard.append(divCardBody2, ulFeeds);
     divFeeds.appendChild(divFeedsCard);
-  }
+  //}
   //console.log('renderRssLists is working!');
  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
@@ -314,27 +339,45 @@ function renderRssLists(rsses) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const rssForm = document.querySelector('.rss-form');
-  rssForm.addEventListener('submit', (event) => {
+  rssForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    handler();
+    await handler();
     
     //console.log(`rssForm.addEventListener('submit' is working`);
-    //console.log(`state= ${JSON.stringify(state, null, 2)}`);
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
+    //console.log(`state.rssForm.isValid= ${state.rssForm.isValid}`);
 
     //if (state.rssForm.isValid) {
-      getRSS(state.rssForm.data.fields.activeUrl)
-      .then((rssData) => {
-        if (rssData) {
-          state.rssForm.data.activeRssUrlsData = rssData;
-          renderRssLists(rssData);
-        } else {
+      const rssData = await getRSS(state.rssForm.data.fields.activeUrl);
+      
+      if (rssData) {
+        state.rssForm.data.activeRssUrlsData = rssData;
+
+        renderRssLists(state.rssForm.data.activeRssUrlsData);
+      }
+      //.then((rssData) => {
+       // if (rssData) {
+         // state.rssForm.data.activeRssUrlsData = rssData;
+
+          //console.log('renderRssLists is starting work!');
+          //renderRssLists(state.rssForm.data.activeRssUrlsData);
+
+          //renderRssLists(state.rssForm.data.activeRssUrlsData);
+          //renderRssLists(rssData);
+        //} else {
          // console.log('Не удалось получить данные RSS');
-        }
-      })
-      .catch((error) => {
-        console.error('Ошибка при получении RSS:', error);
-      });
+       //}
+      //})
+      //.catch((error) => {
+        //console.error('Ошибка при получении RSS:', error);
+      //});
+
+      console.log(`state.rssForm.data.activeRssUrlsData после сабмита= ${JSON.stringify(state.rssForm.data.activeRssUrlsData)}`);
+
+      // console.log('renderRssLists is starting work!');
+      //renderRssLists(state.rssForm.data.activeRssUrlsData);
+
     //}
 
     

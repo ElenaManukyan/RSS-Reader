@@ -44,7 +44,7 @@ const clearErrors = () => {
 };
 
 const render = () => {
-    if (Object.keys(state.rssForm.errors).length === 0) {
+    if (state.rssForm.isValid) {
         clearErrors();
     } else {
         renderErrors(state.rssForm.errors);
