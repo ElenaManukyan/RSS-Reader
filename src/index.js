@@ -157,16 +157,16 @@ const getRSS = async (url) => {
    if (!response.data.status && !response.data.status.content_type) {
     throw new Error('Отсутствует или некорректный объект status в ответе');
    }
-   const contentType = response.data.status.content_type;
+  // const contentType = response.data.status.content_type;
 
   // console.log(`contentType= ${contentType}`);
 
-   if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
-    throw new Error('Ресурс не содержит валидный RSS');
-   }
+  // if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
+  //  throw new Error('Ресурс не содержит валидный RSS');
+   //}
 
   
-   if (contentType.includes('application/rss+xml') || contentType.includes('application/xml')) {
+  // if (contentType.includes('application/rss+xml') || contentType.includes('application/xml')) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
@@ -200,7 +200,7 @@ const getRSS = async (url) => {
 
 
    
-  } catch (error) {
+  catch (error) {
     console.error('Ошибка:', error);
     return null;
   } 
@@ -307,7 +307,10 @@ document.addEventListener('DOMContentLoaded', () => {
   rssForm.addEventListener('submit', (event) => {
     event.preventDefault();
     handler();
-    getRSS(state.rssForm.data.fields.activeUrl)
+    
+
+    if (state.rssForm.isValid) {
+      getRSS(state.rssForm.data.fields.activeUrl)
       .then((rssData) => {
         if (rssData) {
           state.rssForm.data.activeRssUrlsData = rssData;
@@ -319,6 +322,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch((error) => {
         console.error('Ошибка при получении RSS:', error);
       });
+    }
+
+    
   });
 });
 
