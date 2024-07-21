@@ -1,13 +1,30 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('path');
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import webpack from 'webpack';
 
-module.exports = {
+// Получаем текущую директорию
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Экспортируем конфигурацию
+export default {
   entry: './src/index.js',
   mode: process.env.NODE_ENV || 'development',
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js',
     clean: true,
+  },
+  resolve: {
+    fallback: {
+      stream: 'stream-browserify',
+      http: 'stream-http',
+      https: 'https-browserify',
+      url: 'url',
+      timers: 'timers-browserify',
+      process: 'process/browser',
+    },
   },
   module: {
     rules: [
@@ -40,6 +57,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './index.html',
     }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
   ],
   devServer: {
     static: {
@@ -50,3 +70,4 @@ module.exports = {
     hot: true,
   },
 };
+

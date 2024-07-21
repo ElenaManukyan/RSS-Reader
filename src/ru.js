@@ -11,5 +11,6 @@ export default {
         matches: 'Ссылка должна быть валидным URL',
         notValidRSS: 'Ресурс не содержит валидный RSS',
         successRSS: 'RSS успешно загружен',
+        invalidUrl: 'Ссылка должна быть валидным URL',
     },
   };

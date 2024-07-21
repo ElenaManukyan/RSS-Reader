@@ -7,8 +7,9 @@ import { render } from './view.js';
 import i18n from 'i18next';
 import resources from './locales.js';
 import axios from 'axios';
+import RSSParser from 'rss-parser';
 
-const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
+// const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
 
 const state = {
   currentLocale: 'ru',
@@ -63,11 +64,41 @@ const isRSSUrl = async (url) => {
   const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
+    console.log(`xmlDoc= ${JSON.stringify(xmlDoc)}`);
+
+    // console.log(`xmlDoc.getElementsByTagName('rss').length > 0;= ${xmlDoc.getElementsByTagName('rss').length > 0}`);
+
+    //const result = xmlDoc.getElementsByTagName('rss').length > 0 ? true : false;
+    
     return xmlDoc.getElementsByTagName('rss').length > 0;
   } catch (error) {
     return false;
   }
 };
+
+/*
+const parser = new RSSParser();
+
+const isRSSUrl = async (url) => {
+  try {
+    const activeUrl = getUrlWithProxy(url);
+    await parser.parseURL(activeUrl);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+*/
+
+/*
+yup.addMethod(yup.string, 'isRSS', function () {
+  return this.test('is-rss', async function (value) {
+    const valid = await isRSSUrl(value);
+    //console.log(`valid= ${valid}`);
+    return valid;
+  });
+});
+*/
 
 yup.addMethod(yup.string, 'isRSS', function (message) {
   return this.test('is-rss', message, async function (value) {
@@ -77,20 +108,30 @@ yup.addMethod(yup.string, 'isRSS', function (message) {
   });
 });
 
-
 const createSchema = (rssUrls) => yup.object().shape({
-  activeUrl: yup.string()
-  .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`)
-  .matches(regex, `${i18nextInstance.t('matches')}`)
+  activeUrl: yup
+  .string()
+  .url(i18nextInstance.t('invalidUrl'))
   .required()
-  .isRSS(i18nextInstance.t('notValidRSS')),
   /*
-  .test({
-    name: 'success-message',
-    exclusive: true,
-    message: `${i18nextInstance.t('successRSS')}`,
-    
-  }),*/
+  .test('is-valid-url', i18nextInstance.t('invalidUrl'), async function (value) {
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return this.createError({ message: i18nextInstance.t('invalidUrl') });
+    }
+  })
+    */
+   /*
+  .test('is-rss', i18nextInstance.t('notValidRSS'), async function (value) {
+    const { createError } = this;
+    const valid = await isRSSUrl(value);
+    return valid || createError({ message: i18nextInstance.t('notValidRSS') });
+  })
+    */
+  .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`)
+  .isRSS(i18nextInstance.t('notValidRSS'))
 });
 
 const validate = async (fields, rssUrls) => {
