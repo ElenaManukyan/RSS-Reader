@@ -7,7 +7,7 @@ import { render } from './view.js';
 import i18n from 'i18next';
 import resources from './locales.js';
 import axios from 'axios';
-import RSSParser from 'rss-parser';
+//import RSSParser from 'rss-parser';
 
 // const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
 
@@ -69,7 +69,7 @@ const isRSSUrl = async (url) => {
     // console.log(`xmlDoc.getElementsByTagName('rss').length > 0;= ${xmlDoc.getElementsByTagName('rss').length > 0}`);
 
     //const result = xmlDoc.getElementsByTagName('rss').length > 0 ? true : false;
-    
+
     return xmlDoc.getElementsByTagName('rss').length > 0;
   } catch (error) {
     return false;
