@@ -49,11 +49,16 @@ const getUrlWithProxy = (url) => {
 const isRSSUrl = async (url) => {
   try {
     const response = await axios.get(getUrlWithProxy(url));
-   const contentType = response.data.status.content_type;
+   // const contentType = response.data.status.content_type;
 
-   if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
-    return false;
-  }
+   // const contentType = response.data.contents.status['content-type'];
+
+   console.log(`response= ${JSON.stringify(response, null, 2)}`);
+   //console.log(`contentType= ${contentType}`);
+
+   //if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
+  //  return false;
+  //}
 
   const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
@@ -102,7 +107,7 @@ const validate = async (fields, rssUrls) => {
 
 const watchedState = onChange(state, () => {
 
-  console.log('onChange is working!');
+  // console.log('onChange is working!');
 
   render();
 });
@@ -201,9 +206,9 @@ const getRSS = async (url) => {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
-    if (xmlDoc.getElementsByTagName('parseerror').length > 0) {
+    /*if (xmlDoc.getElementsByTagName('parseerror').length > 0) {
       throw new Error('Невалидный RSS');
-    }
+    }*/
     
     const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
     const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
@@ -320,17 +325,24 @@ function renderRssLists(rsses) {
     const liFeeds = document.createElement('li');
     liFeeds.classList.add('list-group-item', 'border-0', 'border-end-0');
 
-    const h3Feeds = document.createElement('h3');
-    h3Feeds.classList.add('h6', 'm-0');
-    h3Feeds.textContent = rsses[0].mainTitle;
-    const pFeeds = document.createElement('p');
-    pFeeds.classList.add('m-0', 'small', 'text-black-50');
-    pFeeds.textContent = rsses[1].mainDescription;
+    //if (rsses[0].mainTitle && rsses[1].mainDescription) {
+      const h3Feeds = document.createElement('h3');
+      h3Feeds.classList.add('h6', 'm-0');
+      h3Feeds.textContent = rsses[0].mainTitle;
+      const pFeeds = document.createElement('p');
+      pFeeds.classList.add('m-0', 'small', 'text-black-50');
+      pFeeds.textContent = rsses[1].mainDescription;
 
-    liFeeds.append(h3Feeds, pFeeds);
-    ulFeeds.appendChild(liFeeds);
-    divFeedsCard.append(divCardBody2, ulFeeds);
-    divFeeds.appendChild(divFeedsCard);
+      liFeeds.append(h3Feeds, pFeeds);
+      ulFeeds.appendChild(liFeeds);
+      divFeedsCard.append(divCardBody2, ulFeeds);
+      divFeeds.appendChild(divFeedsCard);
+   // }
+    
+
+    
+    
+    
   //}
   //console.log('renderRssLists is working!');
  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
@@ -351,6 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
     //if (state.rssForm.isValid) {
       const rssData = await getRSS(state.rssForm.data.fields.activeUrl);
       
+      console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
+
       if (rssData) {
         state.rssForm.data.activeRssUrlsData = rssData;
 
