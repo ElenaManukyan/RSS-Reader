@@ -181,13 +181,13 @@ const getRSS = async (url) => {
    // console.log(`response= ${JSON.stringify(response, null, 4)}`);
 
    
-   if (response.status !== 200) {
+   /*if (response.status !== 200) {
       throw new Error('Ошибка сети');
    }
 
    if (!response.data.status && !response.data.status.content_type) {
     throw new Error('Отсутствует или некорректный объект status в ответе');
-   }
+   } */
   // const contentType = response.data.status.content_type;
 
   // console.log(`contentType= ${contentType}`);
