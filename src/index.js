@@ -165,6 +165,8 @@ const handler = async () => {
   const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
   const isRSS = await isRSSUrl(value);
 
+  const isNetworkError = await getRSS(value);
+
   //if (!isRSS) {
   //}
   //console.log(`state= ${JSON.stringify(state, null, 2)}`);
@@ -191,6 +193,12 @@ const handler = async () => {
     
     //watchedState.rssForm.errors = errors;
     watchedState.rssForm.errors.isRSSUrlError = 'Ресурс не содержит валидный RSS';
+
+  } else if (!isNetworkError) {
+    watchedState.rssForm.isValid = false;
+    
+    //watchedState.rssForm.errors = errors;
+    watchedState.rssForm.errors.isNetworkError = 'Ошибка сети';
 
   }
 
@@ -242,18 +250,15 @@ const getRSS = async (url) => {
    //console.log(`response= ${JSON.stringify(response, null, 4)}`);
    //console.log(`typeof response.status= ${typeof response.status}`);
    
-    if (response.status !== 200) {
-      throw new Error('Ошибка сети');
+    if (response.status !== 200) {  // HERE!!
+      // throw new Error('Ошибка сети');
+
+      return null;
     } 
 
     // const result = 
     //console.log(`await isRSSUrl(value)= ${await isRSSUrl(url)}`);
 
-
-
-
-
-    
    /*if (response.status !== 200) {
       throw new Error('Ошибка сети');
    }
@@ -309,7 +314,7 @@ const getRSS = async (url) => {
 
    
   catch (error) {
-    console.error('Ошибка:', error);
+    //console.error('Ошибка:', error);
     return null;
   } 
 }
