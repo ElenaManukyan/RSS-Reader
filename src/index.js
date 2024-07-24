@@ -126,6 +126,8 @@ const handler = async () => {
   const isRSS = await isRSSUrl(value);
 
   const isNetworkError = await getRSS(value);
+  
+  console.log(`isNetworkError= ${isNetworkError}`);
 
   //if (!isRSS) {
   //}
