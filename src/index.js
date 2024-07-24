@@ -77,29 +77,6 @@ const isRSSUrl = async (url) => {
 };
 
 /*
-const parser = new RSSParser();
-
-const isRSSUrl = async (url) => {
-  try {
-    const activeUrl = getUrlWithProxy(url);
-    await parser.parseURL(activeUrl);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-*/
-
-/*
-yup.addMethod(yup.string, 'isRSS', function () {
-  return this.test('is-rss', async function (value) {
-    const valid = await isRSSUrl(value);
-    //console.log(`valid= ${valid}`);
-    return valid;
-  });
-});
-*/
-
 yup.addMethod(yup.string, 'isRSS', function (message) {
   return this.test('is-rss', message, async function (value) {
     const {path, createError} = this;
@@ -107,24 +84,7 @@ yup.addMethod(yup.string, 'isRSS', function (message) {
     return valid || createError({ path, message });
   });
 });
-
-  /*
-  .test('is-valid-url', i18nextInstance.t('invalidUrl'), async function (value) {
-    try {
-      new URL(value);
-      return true;
-    } catch {
-      return this.createError({ message: i18nextInstance.t('invalidUrl') });
-    }
-  })
-    */
-   /*
-  .test('is-rss', i18nextInstance.t('notValidRSS'), async function (value) {
-    const { createError } = this;
-    const valid = await isRSSUrl(value);
-    return valid || createError({ message: i18nextInstance.t('notValidRSS') });
-  })
-    */
+*/
 
 
 const createSchema = (rssUrls) => yup.object().shape({
@@ -250,11 +210,11 @@ const getRSS = async (url) => {
    //console.log(`response= ${JSON.stringify(response, null, 4)}`);
    //console.log(`typeof response.status= ${typeof response.status}`);
    
-    if (response.status !== 200) {  // HERE!!
+    //if (response.status !== 200) {  // HERE!!
       // throw new Error('Ошибка сети');
 
-      return null;
-    } 
+      //return null;
+    //} 
 
     // const result = 
     //console.log(`await isRSSUrl(value)= ${await isRSSUrl(url)}`);
@@ -279,7 +239,7 @@ const getRSS = async (url) => {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
-    console.log(`xmlDoc= ${JSON.stringify(xmlDoc, null, 2)}`);
+    //console.log(`xmlDoc= ${JSON.stringify(xmlDoc, null, 2)}`);
 
     /*if (xmlDoc.getElementsByTagName('parseerror').length > 0) {
       throw new Error('Невалидный RSS');
@@ -309,13 +269,10 @@ const getRSS = async (url) => {
     return rssData;
     }
    
-   }
-
-
-   
-  catch (error) {
+   } catch (error) {
     //console.error('Ошибка:', error);
-    return null;
+    //return null;
+    console.log(`error= ${error}`);
   } 
 }
 
@@ -438,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //if (state.rssForm.isValid) {
       const rssData = await getRSS(state.rssForm.data.fields.activeUrl);
       
-      console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
+      //console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
 
       if (rssData) {
         state.rssForm.data.activeRssUrlsData = rssData;
@@ -462,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //console.error('Ошибка при получении RSS:', error);
       //});
 
-      console.log(`state.rssForm.data.activeRssUrlsData после сабмита= ${JSON.stringify(state.rssForm.data.activeRssUrlsData)}`);
+     // console.log(`state.rssForm.data.activeRssUrlsData после сабмита= ${JSON.stringify(state.rssForm.data.activeRssUrlsData)}`);
 
       // console.log('renderRssLists is starting work!');
       //renderRssLists(state.rssForm.data.activeRssUrlsData);
