@@ -64,9 +64,9 @@ const isRSSUrl = async (url) => {
   const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
-    console.log(`xmlDoc= ${JSON.stringify(xmlDoc)}`);
+    //console.log(`xmlDoc= ${JSON.stringify(xmlDoc)}`);
 
-    // console.log(`xmlDoc.getElementsByTagName('rss').length > 0;= ${xmlDoc.getElementsByTagName('rss').length > 0}`);
+    //console.log(`xmlDoc.getElementsByTagName('rss').length;= ${xmlDoc.getElementsByTagName('rss').length}`);
 
     //const result = xmlDoc.getElementsByTagName('rss').length > 0 ? true : false;
 
@@ -108,11 +108,6 @@ yup.addMethod(yup.string, 'isRSS', function (message) {
   });
 });
 
-const createSchema = (rssUrls) => yup.object().shape({
-  activeUrl: yup
-  .string()
-  .url(i18nextInstance.t('invalidUrl'))
-  .required()
   /*
   .test('is-valid-url', i18nextInstance.t('invalidUrl'), async function (value) {
     try {
@@ -130,8 +125,16 @@ const createSchema = (rssUrls) => yup.object().shape({
     return valid || createError({ message: i18nextInstance.t('notValidRSS') });
   })
     */
+
+
+const createSchema = (rssUrls) => yup.object().shape({
+  activeUrl: yup
+  .string()
+  .url(i18nextInstance.t('invalidUrl'))
+  .required()
+
   .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`)
-  .isRSS(i18nextInstance.t('notValidRSS'))
+  //.isRSS(i18nextInstance.t('notValidRSS'))
 });
 
 const validate = async (fields, rssUrls) => {
@@ -160,13 +163,17 @@ const handler = async () => {
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
-  
+  const isRSS = await isRSSUrl(value);
+
+  //if (!isRSS) {
+  //}
   //console.log(`state= ${JSON.stringify(state, null, 2)}`);
   //console.log(`errors of the validate func= ${JSON.stringify(errors, null, 2)}`);
   //console.log(`Object.keys(errors).length === 0= ${Object.keys(errors).length === 0}`);
 
   // Тут isValid почему-то не меняется
-  if (Object.keys(errors).length === 0) {
+  if (Object.keys(errors).length === 0 && isRSS) {   // HERE!!!
+    
 
     //console.log('Условие для isValid работает!');
 
@@ -175,14 +182,22 @@ const handler = async () => {
 
       //console.log(`watchedState.rssForm.isValid после изменнения= ${watchedState.rssForm.isValid}`);
 
-  } else {
+  } else if (Object.keys(errors).length !== 0) {
     watchedState.rssForm.isValid = false;
+    
+    watchedState.rssForm.errors = errors;
+  } else if (!isRSS) {
+    watchedState.rssForm.isValid = false;
+    
+    //watchedState.rssForm.errors = errors;
+    watchedState.rssForm.errors.isRSSUrlError = 'Ресурс не содержит валидный RSS';
+
   }
 
-  watchedState.rssForm.errors = errors;
+  
 
 
-  render();
+  //render();
 
 
 };
@@ -224,9 +239,21 @@ const getRSS = async (url) => {
     if (state.rssForm.isValid) {
       const response = await axios.get(getUrlWithProxy(url));
 
-   // console.log(`response= ${JSON.stringify(response, null, 4)}`);
-
+   //console.log(`response= ${JSON.stringify(response, null, 4)}`);
+   //console.log(`typeof response.status= ${typeof response.status}`);
    
+    if (response.status !== 200) {
+      throw new Error('Ошибка сети');
+    } 
+
+    // const result = 
+    //console.log(`await isRSSUrl(value)= ${await isRSSUrl(url)}`);
+
+
+
+
+
+    
    /*if (response.status !== 200) {
       throw new Error('Ошибка сети');
    }
@@ -247,6 +274,8 @@ const getRSS = async (url) => {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
+    console.log(`xmlDoc= ${JSON.stringify(xmlDoc, null, 2)}`);
+
     /*if (xmlDoc.getElementsByTagName('parseerror').length > 0) {
       throw new Error('Невалидный RSS');
     }*/

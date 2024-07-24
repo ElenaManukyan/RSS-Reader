@@ -19,10 +19,15 @@ const renderErrors = (errors) => {
     errorP.classList.remove('text-danger', 'text-success');
 
     // console.log(`errors= ${JSON.stringify(errors, null, 2)}`);
+    console.log(`errors.isRSSUrlError= ${errors.isRSSUrlError}`);
 
    if (errors.activeUrl) {  
         input.classList.add('is-invalid');
         errorP.textContent = errors.activeUrl.message;
+        errorP.classList.add('text-danger');
+    } else if (errors.isRSSUrlError) {
+        input.classList.add('is-invalid');
+        errorP.textContent = i18nextInstance.t('notValidRSS');
         errorP.classList.add('text-danger');
     }
   };
