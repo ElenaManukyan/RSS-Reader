@@ -46,7 +46,7 @@ const getUrlWithProxy = (url) => {
   return urlWithProxy.toString();
 };
 
-
+/*
 const isRSSUrl = async (url) => {
   try {
     const response = await axios.get(getUrlWithProxy(url));
@@ -75,6 +75,7 @@ const isRSSUrl = async (url) => {
     return false;
   }
 };
+*/
 
 /*
 yup.addMethod(yup.string, 'isRSS', function (message) {
