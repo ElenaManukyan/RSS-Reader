@@ -122,12 +122,20 @@ const handler = async () => {
   const name = urlInput.name;
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
-  const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
-  const isRSS = await isRSSUrl(value);
+  //const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
+  //const isRSS = await isRSSUrl(value);
 
-  const isNetworkError = await getRSS(value);
+  //const isNetworkError = await getRSS(value);
   
-  console.log(`isNetworkError= ${isNetworkError}`);
+  //console.log(`isNetworkError= ${isNetworkError}`);
+
+  validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
+    .then(function (data1) {
+      console.log(`data1= ${data1}`);
+    })
+    .catch(function (error) {
+      console.log(`error= ${error}`);
+    })
 
   //if (!isRSS) {
   //}
@@ -136,6 +144,7 @@ const handler = async () => {
   //console.log(`Object.keys(errors).length === 0= ${Object.keys(errors).length === 0}`);
 
   // Тут isValid почему-то не меняется
+  /*
   if (Object.keys(errors).length === 0 && isRSS) {   // HERE!!!
     
 
@@ -163,6 +172,7 @@ const handler = async () => {
     watchedState.rssForm.errors.isNetworkError = 'Ошибка сети';
 
   }
+    */
 
   
 
@@ -207,45 +217,12 @@ appendText();
 const getRSS = async (url) => {
   try {
     if (state.rssForm.isValid) {
-      const response = await axios.get(getUrlWithProxy(url));
-
-   //console.log(`response= ${JSON.stringify(response, null, 4)}`);
-   //console.log(`typeof response.status= ${typeof response.status}`);
-   
-    //if (response.status !== 200) {  // HERE!!
-      // throw new Error('Ошибка сети');
-
-      //return null;
-    //} 
-
-    // const result = 
-    //console.log(`await isRSSUrl(value)= ${await isRSSUrl(url)}`);
-
-   /*if (response.status !== 200) {
-      throw new Error('Ошибка сети');
-   }
-
-   if (!response.data.status && !response.data.status.content_type) {
-    throw new Error('Отсутствует или некорректный объект status в ответе');
-   } */
-  // const contentType = response.data.status.content_type;
-
-  // console.log(`contentType= ${contentType}`);
-
-  // if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
-  //  throw new Error('Ресурс не содержит валидный RSS');
-   //}
-
-  
-  // if (contentType.includes('application/rss+xml') || contentType.includes('application/xml')) {
+    const response = await axios.get(getUrlWithProxy(url)); 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     
     //console.log(`xmlDoc= ${JSON.stringify(xmlDoc, null, 2)}`);
 
-    /*if (xmlDoc.getElementsByTagName('parseerror').length > 0) {
-      throw new Error('Невалидный RSS');
-    }*/
     
     const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
     const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
@@ -283,7 +260,7 @@ const getRSS = async (url) => {
 function renderRssLists(rsses) {
   //if (state.rssForm.isValid) {
 
-    console.log('renderRssLists is working!');
+    // console.log('renderRssLists is working!');
 
     document.querySelector('.posts').innerHTML = '';
     document.querySelector('.feeds').innerHTML = '';
