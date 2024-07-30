@@ -46,46 +46,19 @@ const getUrlWithProxy = (url) => {
   return urlWithProxy.toString();
 };
 
-/*
+
 const isRSSUrl = async (url) => {
   try {
     const response = await axios.get(getUrlWithProxy(url));
-   // const contentType = response.data.status.content_type;
-
-   // const contentType = response.data.contents.status['content-type'];
-
-   console.log(`response= ${JSON.stringify(response, null, 2)}`);
-   //console.log(`contentType= ${contentType}`);
-
-   //if (!contentType.includes('application/rss+xml') && !contentType.includes('application/xml')) {
-  //  return false;
-  //}
-
+   //console.log(`response= ${JSON.stringify(response, null, 2)}`);
   const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
-    
-    //console.log(`xmlDoc= ${JSON.stringify(xmlDoc)}`);
-
-    //console.log(`xmlDoc.getElementsByTagName('rss').length;= ${xmlDoc.getElementsByTagName('rss').length}`);
-
-    //const result = xmlDoc.getElementsByTagName('rss').length > 0 ? true : false;
-
     return xmlDoc.getElementsByTagName('rss').length > 0;
   } catch (error) {
     return false;
   }
 };
-*/
 
-/*
-yup.addMethod(yup.string, 'isRSS', function (message) {
-  return this.test('is-rss', message, async function (value) {
-    const {path, createError} = this;
-    const valid = await isRSSUrl(value);
-    return valid || createError({ path, message });
-  });
-});
-*/
 
 
 const createSchema = (rssUrls) => yup.object().shape({
@@ -104,18 +77,52 @@ const validate = async (fields, rssUrls) => {
     await schema.validate(fields, { abortEarly: false });
     return {};
   } catch (e) {
-    return keyBy(e.inner, 'path');
+    const errors = keyBy(e.inner, 'path');
+    const error = new Error(JSON.stringify(errors, null, 2));
+    error.type = 'validationError';
+    throw error;
   }
 };
 
 
 
 const watchedState = onChange(state, () => {
-
-  // console.log('onChange is working!');
-
   render();
 });
+
+// Проверяю каждый RSS-поток
+function checkEvenRssStream() {  // И ТУТ!! 
+  const allRssStreams = state.rssForm.data.rssUrls;
+  allRssStreams.forEach((RssStream) => {
+    getRSS(RssStream)
+      .then((rssData) => {
+        if (rssData) {
+          const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
+          const descriptions = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
+          const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title) && !descriptions.includes(rssData.description));
+          if (filteredRssData.length > 0) {
+            //console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
+            filteredRssData.forEach((item) => {
+              item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
+              state.rssForm.data.activeRssUrlsData.push(item);
+            });
+            renderRssLists(state.rssForm.data.activeRssUrlsData);
+          }
+        } else {
+         // console.log('Не удалось получить данные RSS');
+        }
+      })
+      .catch((error) => {
+        console.error('Ошибка при получении RSS:', error);
+      });
+  });
+  
+}
+
+function repeat() {  // HERE!!
+  checkEvenRssStream();
+  setTimeout(repeat, 5000);
+}
 
 const handler = async () => {
   const urlInput = document.querySelector('#url-input');
@@ -123,64 +130,54 @@ const handler = async () => {
   const name = urlInput.name;
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
-  //const errors = await validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls);
-  //const isRSS = await isRSSUrl(value);
-
-  //const isNetworkError = await getRSS(value);
-  
-  //console.log(`isNetworkError= ${isNetworkError}`);
 
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-    .then(function (data1) {
-      console.log(`data1= ${data1}`);
+    //.then((ask) => console.log(`ask= ${JSON.stringify(ask)}`))
+    .then((data1) => {
+      //console.log(`String(data1)= ${JSON.stringify(String(data1))}`);
+      if (Object.keys(data1).length === 0) {
+        const result = isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
+        return result;
+      }
+      
+    }) 
+    .then( function (data2) {
+      console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
+
+      //const isRSS = await ;
+      //console.log(`isRSS= ${JSON.stringify(isRSS)}`);
+
+      if (data2) {
+        console.log('repeat() is working!!!!!!!!');
+        repeat();
+        return watchedState.rssForm.data.fields.activeUrl;
+      } else {
+        watchedState.rssForm.isValid = false;
+
+        const error = new Error('URL is not RSS!');
+        error.type = 'noRSS';
+        error.errorMessage = 'URL is not RSS!';
+
+        //console.log(`error= ${error}`);
+
+        watchedState.rssForm.errors = error;
+        throw error;
+      }
+      
     })
+    .then(function (url) {
+      watchedState.rssForm.data.rssUrls.push(url);
+      watchedState.rssForm.isValid = true;
+      //console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
+      //return watchedState.rssForm.data.fields.activeUrl;
+    })
+    
     .catch(function (error) {
       console.log(`error= ${error}`);
+      console.log(`state= ${JSON.stringify(state, null, 2)}`);
+      watchedState.rssForm.isValid = false;
+      watchedState.rssForm.errors = error;
     })
-
-  //if (!isRSS) {
-  //}
-  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
-  //console.log(`errors of the validate func= ${JSON.stringify(errors, null, 2)}`);
-  //console.log(`Object.keys(errors).length === 0= ${Object.keys(errors).length === 0}`);
-
-  // Тут isValid почему-то не меняется
-  /*
-  if (Object.keys(errors).length === 0 && isRSS) {   // HERE!!!
-    
-
-    //console.log('Условие для isValid работает!');
-
-      watchedState.rssForm.data.rssUrls.push(value);
-      watchedState.rssForm.isValid = true;
-
-      //console.log(`watchedState.rssForm.isValid после изменнения= ${watchedState.rssForm.isValid}`);
-
-  } else if (Object.keys(errors).length !== 0) {
-    watchedState.rssForm.isValid = false;
-    
-    watchedState.rssForm.errors = errors;
-  } else if (!isRSS) {
-    watchedState.rssForm.isValid = false;
-    
-    //watchedState.rssForm.errors = errors;
-    watchedState.rssForm.errors.isRSSUrlError = 'Ресурс не содержит валидный RSS';
-
-  } else if (!isNetworkError) {
-    watchedState.rssForm.isValid = false;
-    
-    //watchedState.rssForm.errors = errors;
-    watchedState.rssForm.errors.isNetworkError = 'Ошибка сети';
-
-  }
-    */
-
-  
-
-
-  //render();
-
-
 };
 
 // Locales
@@ -367,46 +364,16 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     await handler();
     
-    //console.log(`rssForm.addEventListener('submit' is working`);
     console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
-    //console.log(`state.rssForm.isValid= ${state.rssForm.isValid}`);
-
-    //if (state.rssForm.isValid) {
-      const rssData = await getRSS(state.rssForm.data.fields.activeUrl);
-      
-      //console.log(`rssData= ${JSON.stringify(rssData, null, 2)}`);
-
+      /*
       if (rssData) {
         state.rssForm.data.activeRssUrlsData = rssData;
 
         renderRssLists(state.rssForm.data.activeRssUrlsData);
       }
-      //.then((rssData) => {
-       // if (rssData) {
-         // state.rssForm.data.activeRssUrlsData = rssData;
-
-          //console.log('renderRssLists is starting work!');
-          //renderRssLists(state.rssForm.data.activeRssUrlsData);
-
-          //renderRssLists(state.rssForm.data.activeRssUrlsData);
-          //renderRssLists(rssData);
-        //} else {
-         // console.log('Не удалось получить данные RSS');
-       //}
-      //})
-      //.catch((error) => {
-        //console.error('Ошибка при получении RSS:', error);
-      //});
-
-     // console.log(`state.rssForm.data.activeRssUrlsData после сабмита= ${JSON.stringify(state.rssForm.data.activeRssUrlsData)}`);
-
-      // console.log('renderRssLists is starting work!');
-      //renderRssLists(state.rssForm.data.activeRssUrlsData);
-
-    //}
-
-    
+        */
+      
   });
 });
 
@@ -449,41 +416,7 @@ function handleNewElements(node) {
   
 }
 
-// Проверяю каждый RSS-поток
-function checkEvenRssStream() {
-  const allRssStreams = state.rssForm.data.rssUrls;
-  allRssStreams.forEach((RssStream) => {
-    getRSS(RssStream)
-      .then((rssData) => {
-        if (rssData) {
-          const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
-          const descriptions = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
-          const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title) && !descriptions.includes(rssData.description));
-          if (filteredRssData.length > 0) {
-            //console.log(`filteredRssData= ${JSON.stringify(filteredRssData, null, 2)}`);
-            filteredRssData.forEach((item) => {
-              item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
-              state.rssForm.data.activeRssUrlsData.push(item);
-            });
-            renderRssLists(state.rssForm.data.activeRssUrlsData);
-          }
-        } else {
-         // console.log('Не удалось получить данные RSS');
-        }
-      })
-      .catch((error) => {
-        console.error('Ошибка при получении RSS:', error);
-      });
-  });
-  
-}
 
-function repeat() {
-  checkEvenRssStream();
-  setTimeout(repeat, 5000);
-}
-
-repeat();
 
 // Создаю новый MutationObserver
 const observer = new MutationObserver((mutations) => {

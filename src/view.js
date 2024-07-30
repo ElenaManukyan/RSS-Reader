@@ -19,7 +19,7 @@ const renderErrors = (errors) => {
     errorP.classList.remove('text-danger', 'text-success');
 
     // console.log(`errors= ${JSON.stringify(errors, null, 2)}`);
-    console.log(`errors.isRSSUrlError= ${errors.isRSSUrlError}`);
+    //console.log(`errors.isRSSUrlError= ${errors.isRSSUrlError}`);
 
    if (errors.activeUrl) {  
         input.classList.add('is-invalid');
@@ -33,7 +33,11 @@ const renderErrors = (errors) => {
         input.classList.add('is-invalid');
         errorP.textContent = i18nextInstance.t('isNetworkError');
         errorP.classList.add('text-danger');
-    }
+    }  else if (errors.type === 'noRSS') {
+        input.classList.add('is-invalid');
+        errorP.textContent = i18nextInstance.t('notValidRSS');
+        errorP.classList.add('text-danger');
+    } 
   };
 
 const clearErrors = () => {
