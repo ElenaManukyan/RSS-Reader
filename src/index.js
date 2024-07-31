@@ -78,13 +78,14 @@ const validate = async (fields, rssUrls) => {
     return {};
   } catch (e) {
     const errors = keyBy(e.inner, 'path');
-    const error = new Error(JSON.stringify(errors, null, 2));
-    error.type = 'validationError';
+    
+    //const error = new Error(JSON.stringify(errors, null, 2));
+    //error.type = 'validationError';
 
-    //console.log(`error in validate= ${error}`);
+    console.log(`errors in validate= ${errors}`);
 
-    //throw error;
-    return error;
+    throw errors;
+    //return error;
   }
 };
 
@@ -155,7 +156,7 @@ const handler = async () => {
       if (data2) {
         //console.log('repeat() is working!!!!!!!!');
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
-      watchedState.rssForm.isValid = true;
+        watchedState.rssForm.isValid = true;
         repeat();
       } else {
 
