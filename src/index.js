@@ -80,7 +80,11 @@ const validate = async (fields, rssUrls) => {
     const errors = keyBy(e.inner, 'path');
     const error = new Error(JSON.stringify(errors, null, 2));
     error.type = 'validationError';
-    throw error;
+
+    //console.log(`error in validate= ${error}`);
+
+    //throw error;
+    return error;
   }
 };
 
@@ -132,51 +136,51 @@ const handler = async () => {
   watchedState.rssForm.data.touchedFields[name] = true;
 
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-    //.then((ask) => console.log(`ask= ${JSON.stringify(ask)}`))
     .then((data1) => {
-      //console.log(`String(data1)= ${JSON.stringify(String(data1))}`);
       if (Object.keys(data1).length === 0) {
         const result = isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
         return result;
+      } else {
+        //watchedState.rssForm.isValid = false;
+        //const error = new Error('PUK!');
+
+        console.log(`data1= ${data1}`);
+
+        throw data1;
       }
       
     }) 
     .then( function (data2) {
-      console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
-
-      //const isRSS = await ;
-      //console.log(`isRSS= ${JSON.stringify(isRSS)}`);
-
+      //console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
       if (data2) {
-        console.log('repeat() is working!!!!!!!!');
+        //console.log('repeat() is working!!!!!!!!');
+        watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
+      watchedState.rssForm.isValid = true;
         repeat();
-        return watchedState.rssForm.data.fields.activeUrl;
       } else {
-        watchedState.rssForm.isValid = false;
 
+        //console.log(`data2= ${data2}`);
+
+        watchedState.rssForm.isValid = false;
         const error = new Error('URL is not RSS!');
         error.type = 'noRSS';
         error.errorMessage = 'URL is not RSS!';
-
-        //console.log(`error= ${error}`);
-
-        watchedState.rssForm.errors = error;
         throw error;
       }
       
-    })
-    .then(function (url) {
-      watchedState.rssForm.data.rssUrls.push(url);
-      watchedState.rssForm.isValid = true;
-      //console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
-      //return watchedState.rssForm.data.fields.activeUrl;
-    })
-    
+    })    
+    // ЗДЕСЬ!!!
     .catch(function (error) {
-      console.log(`error= ${error}`);
-      console.log(`state= ${JSON.stringify(state, null, 2)}`);
-      watchedState.rssForm.isValid = false;
+      //watchedState.rssForm.errors = {};
+      console.log(`error HERE= ${error}`);
+
+      // const errorNew = new Error(JSON.stringify(error, null, 2));
+      
       watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+
+      console.log(`state HERE= ${JSON.stringify(state, null, 2)}`);
+      
     })
 };
 
@@ -364,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     await handler();
     
-    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+    //console.log(`state= ${JSON.stringify(state, null, 2)}`);
 
       /*
       if (rssData) {
