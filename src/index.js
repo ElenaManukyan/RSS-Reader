@@ -137,12 +137,12 @@ const handler = async () => {
   watchedState.rssForm.data.touchedFields[name] = true;
 
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-    .then((data1) => {
+    .then(async (data1) => {
       
       //console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
 
       if (Object.keys(data1).length === 0) {
-        const result = isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
+        const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
         
         // const isNetworkError = getRSS(watchedState.rssForm.data.fields.activeUrl);
         
@@ -178,8 +178,19 @@ const handler = async () => {
 
         //getRSS(watchedState.rssForm.data.fields.activeUrl);
         const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
-        
-        if (response.data.status.httpCode !== 200) {
+        //console.log(`response= ${JSON.stringify(response, null, 2)}`);
+        console.log(`response.data.status.http_code= ${response.data.status.http_code}`);
+        //console.log(`isRSSUrl(watchedState.rssForm.data.fields.activeUrl)= ${isRSSUrl(watchedState.rssForm.data.fields.activeUrl)}`);
+
+        if (!data2 && response.data.status.http_code === 200) {
+          watchedState.rssForm.isValid = false;
+          const error = new Error('URL is not RSS!');
+          error.type = 'noRSS';
+          error.errorMessage = 'URL is not RSS!';
+          throw error;
+        }
+
+        if (response.data.status.http_code !== 200) {
           watchedState.rssForm.isValid = false;
           const error = new Error('Network error!');
           error.type = 'networkError';
@@ -191,14 +202,9 @@ const handler = async () => {
 
         //console.log(`state= ${JSON.stringify(state, null, 2)}`);
         //const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl)); 
-        console.log(`response= ${JSON.stringify(response, null, 2)}`);
 
         
-        watchedState.rssForm.isValid = false;
-        const error = new Error('URL is not RSS!');
-        error.type = 'noRSS';
-        error.errorMessage = 'URL is not RSS!';
-        throw error;
+        
       }
       
     })
