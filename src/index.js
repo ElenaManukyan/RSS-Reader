@@ -212,6 +212,8 @@ const handler = async () => {
       watchedState.rssForm.isValid = false;
     })
     console.log(`state= ${JSON.stringify(state, null, 2)}`);
+
+    
 };
 
 // Locales
@@ -385,9 +387,11 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(`rssFormInput.value= ${rssFormInput.value}`);
     const response = await axios.get(getUrlWithProxy(rssFormInput.value));
     console.log(`response= ${JSON.stringify(response, null, 2)}`);
-    console.log(`feedback message= ${document.querySelector('.feedback').textContent}`);
+    
 
     await handler();
+
+    
     
   });
 });
