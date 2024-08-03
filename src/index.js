@@ -213,6 +213,18 @@ function appendText() {
 appendText();
 
 
+const dataParser = (data) => {
+  const parser = new DOMParser();
+  const feedData = parser.parseFromString(data, 'text/xml');
+  const parseerrors = feedData.querySelector('parsererror');
+
+  console.log(`parseerrors= ${JSON.stringify(parseerrors)}`);
+
+  if (Object.keys(parseerrors).length !== 0) {
+    const error = parseerrors.textContent;
+    throw new Error(error);
+  }
+};
 
 
 
@@ -221,25 +233,21 @@ const getRSS = async (url) => {
   try {
     if (state.rssForm.isValid) {
     const response = await axios.get(getUrlWithProxy(url)); 
+
+    // response = data из примера учителя
+    dataParser(response);
+
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
-    
-    //console.log(`xmlDoc= ${JSON.stringify(xmlDoc, null, 2)}`);
-
-    
     const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
     const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
     const items = xmlDoc.querySelectorAll('item');
-
     const rssData = [];
-
     let itemsId = 0;
-
     rssData.push({ itemsId, mainTitle });
     itemsId += 1;
     rssData.push({ itemsId, mainDescription });
     itemsId += 1;
-
     items.forEach((item) => {
       const title = item.querySelector('title').textContent;
       const description = item.querySelector('description').textContent;
@@ -247,13 +255,9 @@ const getRSS = async (url) => {
       rssData.push({ itemsId, title, description, link });
       itemsId += 1;
     });
-    
     return rssData;
     }
-   
    } catch (error) {
-    //console.error('Ошибка:', error);
-    //return null;
     console.log(`error= ${error}`);
   } 
 }
