@@ -120,7 +120,7 @@ function repeat() {
 const isNetworkError = async (url) => {
   try {
     const response = await axios.get(getUrlWithProxy(url));
-    if (response.data.status.http_code !== 200) {
+    if (response.status !== 200) {
       const error = new Error('Ошибка сети');
       error.type = 'networkError';
       throw error;
