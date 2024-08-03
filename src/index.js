@@ -345,9 +345,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const rssFormInput = rssForm.querySelector('#url-input');
   rssForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+    
     console.log(`rssFormInput.value= ${rssFormInput.value}`);
     await handler();
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
   });
 });
 
