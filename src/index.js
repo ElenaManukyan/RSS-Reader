@@ -241,7 +241,12 @@ const getRSS = async (url) => {
     dataParser(response.data.contents);
 
     if (response.data.status !== 200) {
-      throw new Error('Ошибка сети!');
+      // throw new Error('Ошибка сети');
+
+      const error = new Error('Network error');
+      error.type = 'networkError';
+      // error.errorMessage = 'URL is not RSS!';
+      throw error;
     }
 
     const parser = new DOMParser();

@@ -37,7 +37,11 @@ const renderErrors = (errors) => {
         input.classList.add('is-invalid');
         errorP.textContent = i18nextInstance.t('notValidRSS');
         errorP.classList.add('text-danger');
-    } 
+    } else if (errors.type === 'networkError') {
+        input.classList.add('is-invalid');
+        errorP.textContent = i18nextInstance.t('isNetworkError');
+        errorP.classList.add('text-danger');
+    }
   };
 
 const clearErrors = () => {
