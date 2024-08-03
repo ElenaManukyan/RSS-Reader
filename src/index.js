@@ -158,6 +158,7 @@ const handler = async () => {
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
         watchedState.rssForm.isValid = true;
         repeat();
+        return watchedState.rssForm.data.fields.activeUrl;
       } else {
 
         //console.log(`data2= ${data2}`);
@@ -169,7 +170,10 @@ const handler = async () => {
         throw error;
       }
       
-    })    
+    })
+    .then(function (data3) {
+      getRSS(data3);
+    })
     // ЗДЕСЬ!!!
     .catch(function (error) {
       //watchedState.rssForm.errors = {};
@@ -247,8 +251,8 @@ const getRSS = async (url) => {
       error.type = 'networkError';
       // error.errorMessage = 'URL is not RSS!';
 
-      watchedState.rssForm.errors = error;
-      watchedState.rssForm.isValid = false;
+      //watchedState.rssForm.errors = error;
+      //watchedState.rssForm.isValid = false;
 
       throw error;
     }
