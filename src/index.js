@@ -157,8 +157,9 @@ const handler = async () => {
         //console.log('repeat() is working!!!!!!!!');
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
         watchedState.rssForm.isValid = true;
+        //getRSS(watchedState.rssForm.data.fields.activeUrl);
         repeat();
-        return watchedState.rssForm.data.fields.activeUrl;
+        //return watchedState.rssForm.data.fields.activeUrl;
       } else {
 
         //console.log(`data2= ${data2}`);
@@ -171,9 +172,9 @@ const handler = async () => {
       }
       
     })
-    .then(function (data3) {
-      getRSS(data3);
-    })
+    //.then(function (data3) {
+      //getRSS(data3);
+    //})
     // ЗДЕСЬ!!!
     .catch(function (error) {
       //watchedState.rssForm.errors = {};
@@ -216,7 +217,7 @@ function appendText() {
 }
 appendText();
 
-
+/*
 const dataParser = (data) => {
   const parser = new DOMParser();
   const feedData = parser.parseFromString(data, 'text/xml');
@@ -229,6 +230,7 @@ const dataParser = (data) => {
     throw new Error(error);
   }
 };
+*/
 
 
 
@@ -242,9 +244,11 @@ const getRSS = async (url) => {
     //console.log(`typeof JSON.stringify(response)= ${typeof JSON.stringify(response)}`);
 
     // response = data из примера учителя
-    dataParser(response.data.contents);
+    //dataParser(response.data.contents);
 
-    if (response.data.status !== 200) {
+    console.log(`response.status= ${JSON.stringify(response.status, null, 2)}`);
+
+    if (response.status !== 200) {
       // throw new Error('Ошибка сети');
 
       const error = new Error('Network error');
