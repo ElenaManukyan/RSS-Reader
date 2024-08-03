@@ -109,7 +109,7 @@ function checkEvenRssStream() {  // И ТУТ!!
         console.error('Ошибка при получении RSS:', error);
       });
   });
-  
+  console.log(`state= ${JSON.stringify(state, null, 2)}`);
 }
 
 function repeat() {
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log(`rssFormInput.value= ${rssFormInput.value}`);
     await handler();
-    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+    
   });
 });
 
