@@ -145,7 +145,7 @@ const handler = async () => {
         //watchedState.rssForm.isValid = false;
         //const error = new Error('PUK!');
 
-        console.log(`data1= ${data1}`);
+      //  console.log(`data1= ${data1}`);
 
         throw data1;
       }
@@ -173,14 +173,14 @@ const handler = async () => {
     // ЗДЕСЬ!!!
     .catch(function (error) {
       //watchedState.rssForm.errors = {};
-      console.log(`error HERE= ${error}`);
+    //  console.log(`error HERE= ${error}`);
 
       // const errorNew = new Error(JSON.stringify(error, null, 2));
       
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
 
-      console.log(`state HERE= ${JSON.stringify(state, null, 2)}`);
+     // console.log(`state HERE= ${JSON.stringify(state, null, 2)}`);
       
     })
 };
@@ -220,7 +220,7 @@ const dataParser = (data) => {
 
   console.log(`parseerrors= ${JSON.stringify(parseerrors)}`);
 
-  if (Object.keys(parseerrors).length !== 0) {
+  if (parseerrors !== null) {
     const error = parseerrors.textContent;
     throw new Error(error);
   }
@@ -234,8 +234,11 @@ const getRSS = async (url) => {
     if (state.rssForm.isValid) {
     const response = await axios.get(getUrlWithProxy(url)); 
 
+    console.log(`response= ${JSON.stringify(response, null, 2)}`);
+    //console.log(`typeof JSON.stringify(response)= ${typeof JSON.stringify(response)}`);
+
     // response = data из примера учителя
-    dataParser(response);
+    dataParser(response.data.contents);
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
