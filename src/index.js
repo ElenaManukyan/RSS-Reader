@@ -140,16 +140,16 @@ const handler = async () => {
   watchedState.rssForm.data.touchedFields[name] = true;
 
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-    .then((data0) => {
+    .then(async (data0) => {
       if (Object.keys(data0).length === 0) {
-        const result = isNetworkError(watchedState.rssForm.data.fields.activeUrl);
+        const result = await isNetworkError(watchedState.rssForm.data.fields.activeUrl);
         return result;
       }
     })
-  .then((data1) => {
+  .then(async (data1) => {
       console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
       if (data1) {
-        const result = isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
+        const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
         return result;
       } else {
         watchedState.rssForm.isValid = false;
@@ -158,7 +158,7 @@ const handler = async () => {
         throw error;
       }
     }) 
-    .then(async function (data2) {
+    .then(function (data2) {
       console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
       if (data2) {
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
