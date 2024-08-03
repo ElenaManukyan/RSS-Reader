@@ -138,9 +138,23 @@ const handler = async () => {
 
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
     .then((data1) => {
+      
+      //console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
+
       if (Object.keys(data1).length === 0) {
         const result = isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
-        return result;
+        
+        // const isNetworkError = getRSS(watchedState.rssForm.data.fields.activeUrl);
+        
+        console.log(`result= ${JSON.stringify(result, null, 2)}`);
+
+        //if (result) {
+          return result;
+        //}
+
+        //return getRSS(watchedState.rssForm.data.fields.activeUrl);
+
+        
       } else {
         //watchedState.rssForm.isValid = false;
         //const error = new Error('PUK!');
@@ -151,8 +165,8 @@ const handler = async () => {
       }
       
     }) 
-    .then( function (data2) {
-      //console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
+    .then(async function (data2) {
+      console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
       if (data2) {
         //console.log('repeat() is working!!!!!!!!');
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
@@ -162,8 +176,24 @@ const handler = async () => {
         //return watchedState.rssForm.data.fields.activeUrl;
       } else {
 
+        //getRSS(watchedState.rssForm.data.fields.activeUrl);
+        const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
+        
+        if (response.data.status.httpCode !== 200) {
+          watchedState.rssForm.isValid = false;
+          const error = new Error('Network error!');
+          error.type = 'networkError';
+          //error.errorMessage = 'URL is not RSS!';
+          throw error;
+        }
+
         //console.log(`data2= ${data2}`);
 
+        //console.log(`state= ${JSON.stringify(state, null, 2)}`);
+        //const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl)); 
+        console.log(`response= ${JSON.stringify(response, null, 2)}`);
+
+        
         watchedState.rssForm.isValid = false;
         const error = new Error('URL is not RSS!');
         error.type = 'noRSS';
@@ -249,7 +279,8 @@ const getRSS = async (url) => {
     console.log(`state= ${JSON.stringify(state, null, 2)}`);
     console.log(`response= ${JSON.stringify(response, null, 2)}`);
 
-    if (response.status !== 200) {
+    /*
+    if (response.status.httpCode !== 200) {
       // throw new Error('Ошибка сети');
 
       const error = new Error('Network error');
@@ -261,6 +292,7 @@ const getRSS = async (url) => {
 
       throw error;
     }
+      */
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
