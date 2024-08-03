@@ -342,10 +342,11 @@ function renderRssLists(rsses) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const rssForm = document.querySelector('.rss-form');
+  const rssFormInput = rssForm.querySelector('#url-input');
   rssForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     console.log(`state= ${JSON.stringify(state, null, 2)}`);
-    console.log(`event.value= ${event.value}`);
+    console.log(`rssFormInput.value= ${rssFormInput.value}`);
     await handler();
   });
 });
