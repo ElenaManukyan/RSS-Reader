@@ -240,6 +240,10 @@ const getRSS = async (url) => {
     // response = data из примера учителя
     dataParser(response.data.contents);
 
+    if (response.data.status !== 200) {
+      throw new Error('Ошибка сети!');
+    }
+
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
