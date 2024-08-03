@@ -121,7 +121,7 @@ function repeat() {
 const isNetworkError = async (url) => {
   try {
     const response = await axios.get(getUrlWithProxy(url));
-    if (response.status !== 200) {
+    if (response.status !== 200 || response.data.contents === null || Object.keys(response.data.status.error).length !== 0) {
       const error = new Error('Ошибка сети');
       error.type = 'networkError';
       throw error;
@@ -129,6 +129,16 @@ const isNetworkError = async (url) => {
       return true;
     }
   } catch(e) {
+    //console.log(`e= ${e}`);
+    /*
+    if (!e.response) {
+      console.error('Network Error:', e.message);
+    }
+    */
+   /*   if (e.request) {
+    return false;
+   }*/
+
     return false;
   }
 }
@@ -145,10 +155,12 @@ const handler = async () => {
   
 
   .then((data0) => {
-      if (data0) {
+    console.log(`data0= ${JSON.stringify(data0, null, 2)}`);
+      if (Object.keys(data0).length === 0) {
        /* const result = await isNetworkError(watchedState.rssForm.data.fields.activeUrl);
         return result; */
         const res = isNetworkError(watchedState.rssForm.data.fields.activeUrl)
+        /*
           .then(function (innerData) {
             if (innerData) {
               return true;
@@ -156,6 +168,8 @@ const handler = async () => {
               return false;
             }
           })
+            */
+          /*
           .then(async function (innerData1) {
             if (innerData1) {
               const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
@@ -166,8 +180,10 @@ const handler = async () => {
               error.type = 'networkError';
               throw error;
             }
-          })
+          }) */
           return res;
+      } else {
+        throw data0;
       }
     })
     /*
@@ -179,7 +195,7 @@ const handler = async () => {
     })
       */
 
-    /*
+  
     .then(async (data1) => {
       console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
       if (Object.keys(data1).length === 0) {
@@ -192,7 +208,7 @@ const handler = async () => {
         throw error;
       }
     }) 
-*/
+
   
     .then(function (data2) {
       console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
