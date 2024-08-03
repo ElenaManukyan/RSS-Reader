@@ -247,8 +247,8 @@ const getRSS = async (url) => {
       error.type = 'networkError';
       // error.errorMessage = 'URL is not RSS!';
 
-      state.rssForm.errors = error;
-      state.rssForm.isValid = false;
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
 
       throw error;
     }
