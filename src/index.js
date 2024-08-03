@@ -219,10 +219,6 @@ const dataParser = (data) => {
   }
 };
 
-
-
-
-
 // Get RSS stream
 const getRSS = async (url) => {
   try {
@@ -331,7 +327,6 @@ function renderRssLists(rsses) {
     const liFeeds = document.createElement('li');
     liFeeds.classList.add('list-group-item', 'border-0', 'border-end-0');
 
-    //if (rsses[0].mainTitle && rsses[1].mainDescription) {
       const h3Feeds = document.createElement('h3');
       h3Feeds.classList.add('h6', 'm-0');
       h3Feeds.textContent = rsses[0].mainTitle;
@@ -343,34 +338,15 @@ function renderRssLists(rsses) {
       ulFeeds.appendChild(liFeeds);
       divFeedsCard.append(divCardBody2, ulFeeds);
       divFeeds.appendChild(divFeedsCard);
-   // }
-    
-
-    
-    
-    
-  //}
-  //console.log('renderRssLists is working!');
- //console.log(`state= ${JSON.stringify(state, null, 2)}`);
-
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const rssForm = document.querySelector('.rss-form');
   rssForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+    console.log(`event.value= ${event.value}`);
     await handler();
-    
-    //console.log(`state= ${JSON.stringify(state, null, 2)}`);
-
-      /*
-      if (rssData) {
-        state.rssForm.data.activeRssUrlsData = rssData;
-
-        renderRssLists(state.rssForm.data.activeRssUrlsData);
-      }
-        */
-      
   });
 });
 
