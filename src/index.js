@@ -246,6 +246,7 @@ const getRSS = async (url) => {
     // response = data из примера учителя
     dataParser(response.data.contents);
 
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
     console.log(`response= ${JSON.stringify(response, null, 2)}`);
 
     if (response.status !== 200) {
