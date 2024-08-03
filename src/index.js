@@ -217,7 +217,7 @@ function appendText() {
 }
 appendText();
 
-/*
+
 const dataParser = (data) => {
   const parser = new DOMParser();
   const feedData = parser.parseFromString(data, 'text/xml');
@@ -230,7 +230,7 @@ const dataParser = (data) => {
     throw new Error(error);
   }
 };
-*/
+
 
 
 
@@ -244,7 +244,7 @@ const getRSS = async (url) => {
     //console.log(`typeof JSON.stringify(response)= ${typeof JSON.stringify(response)}`);
 
     // response = data из примера учителя
-    //dataParser(response.data.contents);
+    dataParser(response.data.contents);
 
     console.log(`response= ${JSON.stringify(response, null, 2)}`);
 
