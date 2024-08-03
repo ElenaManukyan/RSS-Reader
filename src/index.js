@@ -234,7 +234,7 @@ const getRSS = async (url) => {
     if (state.rssForm.isValid) {
     const response = await axios.get(getUrlWithProxy(url)); 
 
-    console.log(`response= ${JSON.stringify(response, null, 2)}`);
+    //console.log(`response= ${JSON.stringify(response, null, 2)}`);
     //console.log(`typeof JSON.stringify(response)= ${typeof JSON.stringify(response)}`);
 
     // response = data из примера учителя
@@ -246,6 +246,10 @@ const getRSS = async (url) => {
       const error = new Error('Network error');
       error.type = 'networkError';
       // error.errorMessage = 'URL is not RSS!';
+
+      state.rssForm.errors = error;
+      state.rssForm.isValid = false;
+
       throw error;
     }
 
