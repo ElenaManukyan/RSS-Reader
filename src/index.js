@@ -140,15 +140,48 @@ const handler = async () => {
   watchedState.rssForm.data.touchedFields[name] = true;
 
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-    .then(async (data0) => {
-      if (Object.keys(data0).length === 0) {
-        const result = await isNetworkError(watchedState.rssForm.data.fields.activeUrl);
-        return result;
+    
+  
+
+  .then((data0) => {
+      if (data0) {
+       /* const result = await isNetworkError(watchedState.rssForm.data.fields.activeUrl);
+        return result; */
+        const res = isNetworkError(watchedState.rssForm.data.fields.activeUrl)
+          .then(function (innerData) {
+            if (innerData) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .then(async function (innerData1) {
+            if (innerData1) {
+              const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
+              return result;
+            } else {
+              watchedState.rssForm.isValid = false;
+              const error = new Error('Network error!');
+              error.type = 'networkError';
+              throw error;
+            }
+          })
+          return res;
       }
     })
-  .then(async (data1) => {
+    /*
+    .then(function (innerData2) {
+      console.log(`innerData2= ${innerData2}`);
+      if (innerData2) {
+
+      }
+    })
+      */
+
+    /*
+    .then(async (data1) => {
       console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
-      if (data1) {
+      if (Object.keys(data1).length === 0) {
         const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
         return result;
       } else {
@@ -158,6 +191,8 @@ const handler = async () => {
         throw error;
       }
     }) 
+*/
+  
     .then(function (data2) {
       console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
       if (data2) {
