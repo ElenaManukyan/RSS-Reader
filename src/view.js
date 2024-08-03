@@ -42,7 +42,6 @@ const renderErrors = (errors) => {
         errorP.textContent = i18nextInstance.t('isNetworkError');
         errorP.classList.add('text-danger');
     }
-    console.log(`feedback message= ${document.querySelector('.feedback').textContent}`);
   };
 
 const clearErrors = () => {

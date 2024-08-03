@@ -83,6 +83,7 @@ const validate = async (fields, rssUrls) => {
 
 const watchedState = onChange(state, () => {
   render();
+  console.log(`feedback message= ${document.querySelector('.feedback').textContent}`);
 });
 
 // Проверяю каждый RSS-поток
