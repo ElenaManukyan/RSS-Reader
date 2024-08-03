@@ -109,7 +109,7 @@ function checkEvenRssStream() {  // И ТУТ!!
         console.error('Ошибка при получении RSS:', error);
       });
   });
-  console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  
 }
 
 function repeat() {
@@ -176,6 +176,7 @@ const handler = async () => {
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
     })
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
 };
 
 // Locales
@@ -327,17 +328,17 @@ function renderRssLists(rsses) {
     const liFeeds = document.createElement('li');
     liFeeds.classList.add('list-group-item', 'border-0', 'border-end-0');
 
-      const h3Feeds = document.createElement('h3');
-      h3Feeds.classList.add('h6', 'm-0');
-      h3Feeds.textContent = rsses[0].mainTitle;
-      const pFeeds = document.createElement('p');
-      pFeeds.classList.add('m-0', 'small', 'text-black-50');
-      pFeeds.textContent = rsses[1].mainDescription;
+    const h3Feeds = document.createElement('h3');
+    h3Feeds.classList.add('h6', 'm-0');
+    h3Feeds.textContent = rsses[0].mainTitle;
+    const pFeeds = document.createElement('p');
+    pFeeds.classList.add('m-0', 'small', 'text-black-50');
+    pFeeds.textContent = rsses[1].mainDescription;
 
-      liFeeds.append(h3Feeds, pFeeds);
-      ulFeeds.appendChild(liFeeds);
-      divFeedsCard.append(divCardBody2, ulFeeds);
-      divFeeds.appendChild(divFeedsCard);
+    liFeeds.append(h3Feeds, pFeeds);
+    ulFeeds.appendChild(liFeeds);
+    divFeedsCard.append(divCardBody2, ulFeeds);
+    divFeeds.appendChild(divFeedsCard);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -347,6 +348,10 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     
     console.log(`rssFormInput.value= ${rssFormInput.value}`);
+    const response = await axios.get(getUrlWithProxy(rssFormInput.value));
+    console.log(`response= ${JSON.stringify(response, null, 2)}`);
+
+
     await handler();
     
   });
