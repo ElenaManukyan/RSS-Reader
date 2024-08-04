@@ -129,7 +129,7 @@ const isNetworkError = async (url) => {
       return true;
     }
   } catch(e) {
-    //console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
+    console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
     // return false;
     //return e;
   }
