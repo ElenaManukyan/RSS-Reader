@@ -204,6 +204,31 @@ const handler = async () => {
     })
 };
 
+
+
+
+const showNetworkError = () => {
+  const error = new Error('Network error!');
+  error.type = 'networkError';
+  watchedState.rssForm.errors = error;
+  watchedState.rssForm.isValid = false;
+};
+
+const hiddenNetworkError = () => {
+  watchedState.rssForm.isValid = true;
+};
+
+window.addEventListener('online', () => {
+  hiddenNetworkError(); // Hide message about network error
+});
+
+window.addEventListener('offline', () => {
+  showNetworkError(); // Show message about network error
+});
+
+
+
+
 // Locales
 function appendText() {
   const h1RuName = document.querySelector('.display-3');
