@@ -130,6 +130,8 @@ const isNetworkError = async (url) => {
     }
   } catch(e) {
     console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
+    watchedState.rssForm.errors = e;
+    watchedState.rssForm.isValid = false;
     // return false;
     //return e;
   }
