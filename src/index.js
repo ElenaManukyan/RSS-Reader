@@ -108,6 +108,9 @@ function checkEvenRssStream() {  // И ТУТ!!
       })
       .catch((error) => {
         console.error('Ошибка при получении RSS:', error);
+
+        watchedState.rssForm.errors = error;
+        watchedState.rssForm.isValid = false;
       });
   });
   
@@ -132,8 +135,6 @@ const isNetworkError = async (url) => {
     console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
     watchedState.rssForm.errors = e;
     watchedState.rssForm.isValid = false;
-    // return false;
-    //return e;
   }
 };
 
@@ -148,9 +149,7 @@ const handler = async () => {
     console.log(`data0= ${JSON.stringify(data0, null, 2)}`);
       if (Object.keys(data0).length === 0) {
         const res = isNetworkError(watchedState.rssForm.data.fields.activeUrl)
-        //if (res) {
-          return res;
-        //}
+        return res;
       } else {
         throw data0;
       }
@@ -161,7 +160,6 @@ const handler = async () => {
         const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
         return result;
       } else {
-        // console.log(`err= ${err}`);
         watchedState.rssForm.isValid = false;
         const error = new Error('Network error!');
         error.type = 'networkError';
@@ -187,7 +185,6 @@ const handler = async () => {
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
     })
-    //console.log(`state= ${JSON.stringify(state, null, 2)}`);
 };
 
 // Locales
