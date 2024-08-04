@@ -54,6 +54,10 @@ const isRSSUrl = async (url) => {
     const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
     return xmlDoc.getElementsByTagName('rss').length > 0;
   } catch (error) {
+
+    watchedState.rssForm.errors = error;
+    watchedState.rssForm.isValid = false;
+
     return false;
   }
 };
@@ -111,6 +115,7 @@ function checkEvenRssStream() {  // И ТУТ!!
 
         watchedState.rssForm.errors = error;
         watchedState.rssForm.isValid = false;
+
       });
   });
   
@@ -133,8 +138,10 @@ const isNetworkError = async (url) => {
     }
   } catch(e) {
     console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
+
     watchedState.rssForm.errors = e;
     watchedState.rssForm.isValid = false;
+
   }
 };
 
@@ -182,8 +189,10 @@ const handler = async () => {
     })
     .catch(function (error) {
       console.log(`error catch block= ${error}`);
+
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
+      
     })
 };
 
