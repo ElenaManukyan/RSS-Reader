@@ -163,7 +163,7 @@ const handler = async () => {
     })  
     .then(async (data1) => {
       console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
-      if (data1) {
+      if (!data1) {
         const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
         return result;
       } else {
