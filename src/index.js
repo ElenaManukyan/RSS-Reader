@@ -257,6 +257,8 @@ const getRSS = async (url) => {
     }
    } catch (error) {
     console.log(`error= ${error}`);
+    watchedState.rssForm.errors = error;
+    watchedState.rssForm.isValid = false;
   } 
 }
 
