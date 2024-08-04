@@ -246,7 +246,7 @@ const checkInternetConnection = () => {
 
 function repeatCheck() {
   checkInternetConnection();
-  setTimeout(repeatCheck, 4000);
+  setTimeout(repeatCheck, 1000);
 }
 
 
