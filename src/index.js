@@ -55,11 +55,13 @@ const isRSSUrl = async (url) => {
     return xmlDoc.getElementsByTagName('rss').length > 0;
   } catch (error) {
 
+    if (error.message === 'Network Error') {
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+    }
+    
 
-    watchedState.rssForm.errors = error;
-    watchedState.rssForm.isValid = false;
-
-    return false;
+    // return false;
   }
 };
 
@@ -112,7 +114,7 @@ function checkEvenRssStream() {  // И ТУТ!!
         }
       })
       .catch((error) => {
-        console.error('Ошибка при получении RSS:', error);
+        //console.error('Ошибка при получении RSS:', error);
 
         watchedState.rssForm.errors = error;
         watchedState.rssForm.isValid = false;
@@ -140,8 +142,10 @@ const isNetworkError = async (url) => {
   } catch(e) {
     console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
 
-    watchedState.rssForm.errors = e;
-    watchedState.rssForm.isValid = false;
+    if (e.message === 'Network Error') {
+      watchedState.rssForm.errors = e;
+      watchedState.rssForm.isValid = false;
+    }
 
   }
 };
@@ -189,7 +193,7 @@ const handler = async () => {
       }
     })
     .catch(function (error) {
-      console.log(`error catch block= ${error}`);
+      console.log(`error catch block= ${JSON.stringify(error, null, 2)}`);
 
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
@@ -266,8 +270,14 @@ const getRSS = async (url) => {
     }
    } catch (error) {
     console.log(`error= ${error}`);
-    watchedState.rssForm.errors = error;
-    watchedState.rssForm.isValid = false;
+
+
+    if (error.message === 'Network Error') {
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+    }
+
+
   } 
 }
 
