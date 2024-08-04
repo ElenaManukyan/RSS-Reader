@@ -55,7 +55,7 @@ const isRSSUrl = async (url) => {
     return xmlDoc.getElementsByTagName('rss').length > 0;
   } catch (error) {
 
-    
+
     watchedState.rssForm.errors = error;
     watchedState.rssForm.isValid = false;
 
@@ -168,7 +168,7 @@ const handler = async () => {
         const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
         return result;
       } else {
-        watchedState.rssForm.isValid = false;
+        //watchedState.rssForm.isValid = false;
         const error = new Error('Network error!');
         error.type = 'networkError';
         throw error;
@@ -181,7 +181,7 @@ const handler = async () => {
         watchedState.rssForm.isValid = true;
         repeat();
       } else {
-        watchedState.rssForm.isValid = false;
+        //watchedState.rssForm.isValid = false;
         const error = new Error('URL is not RSS!');
         error.type = 'noRSS';
         error.errorMessage = 'URL is not RSS!';
