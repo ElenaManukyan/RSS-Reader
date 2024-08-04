@@ -129,19 +129,11 @@ const isNetworkError = async (url) => {
       return true;
     }
   } catch(e) {
-    //console.log(`e= ${e}`);
-    /*
-    if (!e.response) {
-      console.error('Network Error:', e.message);
-    }
-    */
-   /*   if (e.request) {
-    return false;
-   }*/
-
-    return false;
+    //console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
+    // return false;
+    //return e;
   }
-}
+};
 
 const handler = async () => {
   const urlInput = document.querySelector('#url-input');
