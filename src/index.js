@@ -55,6 +55,7 @@ const isRSSUrl = async (url) => {
     return xmlDoc.getElementsByTagName('rss').length > 0;
   } catch (error) {
 
+    
     watchedState.rssForm.errors = error;
     watchedState.rssForm.isValid = false;
 
@@ -192,7 +193,7 @@ const handler = async () => {
 
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
-      
+
     })
 };
 
@@ -367,8 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     
     console.log(`rssFormInput.value= ${rssFormInput.value}`);
-    const response = await axios.get(getUrlWithProxy(rssFormInput.value));
-    console.log(`response= ${JSON.stringify(response, null, 2)}`);
+    //const response = await axios.get(getUrlWithProxy(rssFormInput.value));
+    //console.log(`response= ${JSON.stringify(response, null, 2)}`);
     
 
     await handler();
