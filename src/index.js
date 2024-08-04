@@ -116,8 +116,11 @@ function checkEvenRssStream() {  // И ТУТ!!
       .catch((error) => {
         //console.error('Ошибка при получении RSS:', error);
 
-        watchedState.rssForm.errors = error;
-        watchedState.rssForm.isValid = false;
+        if (error.message === 'Network Error') {
+          watchedState.rssForm.errors = error;
+          watchedState.rssForm.isValid = false;
+        }
+        
 
       });
   });
