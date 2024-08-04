@@ -214,17 +214,40 @@ const showNetworkError = () => {
   watchedState.rssForm.isValid = false;
 };
 
-const hiddenNetworkError = () => {
+const hiddeNetworkError = () => {
   watchedState.rssForm.isValid = true;
 };
 
 window.addEventListener('online', () => {
-  hiddenNetworkError(); // Hide message about network error
+  hiddeNetworkError(); // Hide message about network error
 });
 
 window.addEventListener('offline', () => {
   showNetworkError(); // Show message about network error
 });
+
+let isOnline = true;
+
+const checkInternetConnection = () => {
+  axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl))
+    .then(() => {
+      if (!isOnline) {
+        isOnline = true;
+        hiddeNetworkError();
+      }
+    })
+    .catch(() => {
+      if (isOnline) {
+        isOnline = false;
+        showNetworkError();
+      }
+    });
+};
+
+function repeatCheck() {
+  checkInternetConnection();
+  setTimeout(repeatCheck, 4000);
+}
 
 
 
@@ -411,7 +434,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
 
     await handler();
-
+    
+    repeatCheck();
     
     
   });
