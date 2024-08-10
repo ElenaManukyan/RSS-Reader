@@ -56,10 +56,10 @@ const isRSSUrl = (rawData) => {
 
 const createSchema = (rssUrls) => yup.object().shape({
   activeUrl: yup
-  .string()
-  .url(i18nextInstance.t('invalidUrl'))
-  .required()
-  .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`)
+    .string()
+    .url(i18nextInstance.t('invalidUrl'))
+    .required()
+    .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`),
 });
 
 const validate = async (fields, rssUrls) => {
@@ -76,6 +76,41 @@ const validate = async (fields, rssUrls) => {
 const watchedState = onChange(state, () => {
   render();
 });
+
+// Get RSS stream
+const getRSS = async (url) => {
+  try {
+    if (state.rssForm.isValid) {
+    const response = await axios.get(getUrlWithProxy(url)); 
+    dataParser(response.data.contents);
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
+    const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
+    const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
+    const items = xmlDoc.querySelectorAll('item');
+    const rssData = [];
+    let itemsId = 0;
+    rssData.push({ itemsId, mainTitle });
+    itemsId += 1;
+    rssData.push({ itemsId, mainDescription });
+    itemsId += 1;
+    items.forEach((item) => {
+      const title = item.querySelector('title').textContent;
+      const description = item.querySelector('description').textContent;
+      const link = item.querySelector('link').textContent;
+      rssData.push({ itemsId, title, description, link });
+      itemsId += 1;
+    });
+    return rssData;
+    }
+   } catch (error) {
+    console.log(`error= ${error}`);
+    if (error.message === 'Network Error') {
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+    }
+  } 
+}
 
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
@@ -243,42 +278,6 @@ const dataParser = (data) => {
     throw new Error(error);
   }
 };
-
-// Get RSS stream
-const getRSS = async (url) => {
-  try {
-    if (state.rssForm.isValid) {
-    const response = await axios.get(getUrlWithProxy(url)); 
-    dataParser(response.data.contents);
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
-    const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
-    const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
-    const items = xmlDoc.querySelectorAll('item');
-    const rssData = [];
-    let itemsId = 0;
-    rssData.push({ itemsId, mainTitle });
-    itemsId += 1;
-    rssData.push({ itemsId, mainDescription });
-    itemsId += 1;
-    items.forEach((item) => {
-      const title = item.querySelector('title').textContent;
-      const description = item.querySelector('description').textContent;
-      const link = item.querySelector('link').textContent;
-      rssData.push({ itemsId, title, description, link });
-      itemsId += 1;
-    });
-    return rssData;
-    }
-   } catch (error) {
-    console.log(`error= ${error}`);
-    if (error.message === 'Network Error') {
-      watchedState.rssForm.errors = error;
-      watchedState.rssForm.isValid = false;
-    }
-  } 
-}
-
 
 // Render RSS lists
 function renderRssLists(rsses) {
