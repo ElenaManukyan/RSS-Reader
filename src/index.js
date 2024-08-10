@@ -138,6 +138,7 @@ function repeat() {
   setTimeout(repeat, 5000);
 }
 
+/*
 const isNetworkError = async (url) => {
   try {
     const response = await axios.get(getUrlWithProxy(url));
@@ -158,6 +159,7 @@ const isNetworkError = async (url) => {
 
   }
 };
+*/
 
 const handler = async () => {
   const urlInput = document.querySelector('#url-input');
