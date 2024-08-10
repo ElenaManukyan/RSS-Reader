@@ -15,7 +15,7 @@ const renderErrors = (errors) => {
   const input = document.querySelector('#url-input');
   input.classList.remove('is-invalid');
   errorP.classList.remove('text-danger', 'text-success');
-  if (errors.activeUrl) {  
+  if (errors.activeUrl) {
     input.classList.add('is-invalid');
     errorP.textContent = errors.activeUrl.message;
     errorP.classList.add('text-danger');
@@ -27,7 +27,7 @@ const renderErrors = (errors) => {
     input.classList.add('is-invalid');
     errorP.textContent = i18nextInstance.t('isNetworkError');
     errorP.classList.add('text-danger');
-  }  else if (errors.type === 'noRSS') {
+  } else if (errors.type === 'noRSS') {
     input.classList.add('is-invalid');
     errorP.textContent = i18nextInstance.t('notValidRSS');
     errorP.classList.add('text-danger');
@@ -51,11 +51,11 @@ const clearErrors = () => {
 };
 
 const render = () => {
-    if (state.rssForm.isValid) {
-      clearErrors();
-    } else {
-      renderErrors(state.rssForm.errors);
-    }
-  };
+  if (state.rssForm.isValid) {
+    clearErrors();
+  } else {
+    renderErrors(state.rssForm.errors);
+  }
+};
 
 export { renderErrors, clearErrors, render };

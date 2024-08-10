@@ -182,31 +182,31 @@ const handler = async () => {
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-  .then(async (data0) => {
-    console.log(`data0= ${JSON.stringify(data0, null, 2)}`);
+    .then(async (data0) => {
+      console.log(`data0= ${JSON.stringify(data0, null, 2)}`);
       if (Object.keys(data0).length === 0) {
         const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
         return response;
       } else {
         throw data0;
       }
-  })  
-  .then(async (data1) => {
-    console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
-    const result = isRSSUrl(data1);
-    return result;
-  })
-  .then(function (data2) {
-    console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
-    watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
-    watchedState.rssForm.isValid = true;
-    repeat();
-  })
-  .catch(function (error) {
-    console.log(`error catch block= ${JSON.stringify(error, null, 2)}`);
-    watchedState.rssForm.errors = error;
-    watchedState.rssForm.isValid = false;
-  })
+    })  
+    .then(async (data1) => {
+      console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
+      const result = isRSSUrl(data1);
+      return result;
+    })
+    .then(function (data2) {
+      console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
+      watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
+      watchedState.rssForm.isValid = true;
+      repeat();
+    })
+    .catch(function catchError (error) {
+      console.log(`error catch block= ${JSON.stringify(error, null, 2)}`);
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+    });
 };
 
 const showNetworkError = () => {
@@ -272,7 +272,6 @@ function appendText() {
   textCenter.appendChild(textCenterA);
 }
 appendText();
-
 
 const dataParser = (data) => {
   const parser = new DOMParser();
@@ -365,14 +364,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
 document.querySelector('.posts').addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const buttonId = Number(event.target.getAttribute('data-id'));
-    const filteredPostInfo = state.rssForm.data.activeRssUrlsData.filter((item) => item.itemsId === buttonId)[0];
-    document.querySelector('.modal-title').textContent = filteredPostInfo.title;
-    document.querySelector('.modal-body').textContent = filteredPostInfo.description;
-    document.querySelector('.full-article').setAttribute('href', `${filteredPostInfo.link}`);
+    const filtData = state.rssForm.data.activeRssUrlsData.filter((item) => item.itemsId === buttonId)[0];
+    document.querySelector('.modal-title').textContent = filtData.title;
+    document.querySelector('.modal-body').textContent = filtData.description;
+    document.querySelector('.full-article').setAttribute('href', `${filtData.link}`);
     const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(buttonId)}"]`);
     clickedListElement.classList.remove('fw-bold');
     clickedListElement.classList.add('fw-normal');
@@ -390,7 +388,7 @@ function handleNewElements(node) {
         res.push(element.href);
       });
       resolve(res);
-    } catch(error) {
+    } catch (error) {
       reject(error);
     }
   });
