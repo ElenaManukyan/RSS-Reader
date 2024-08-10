@@ -186,16 +186,11 @@ function checkEvenRssStream() {
   const allRssStreams = state.rssForm.data.rssUrls;
   allRssStreams.forEach((RssStream) => {
     getRSS(RssStream)
-      .then((rssData) => {
-        if (rssData) {
+      .then((d) => {
+        if (d) {
           const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
           const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
-          const filt = rssData.filter((i) => {
-            if (!titles.includes(i.title) && !desc.includes(i.description)) {
-              return i;
-            }
-            return;
-          });
+          const filt = d.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
           if (filt.length > 0) {
             filt.forEach((item) => {
               item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
@@ -222,8 +217,6 @@ function repeat() {
 const handler = async () => {
   const urlInput = document.querySelector('#url-input');
   const { value, name } = urlInput;
-  // const value = urlInput.value;
-  // const name = urlInput.name;
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
