@@ -4,15 +4,15 @@ import { fileURLToPath } from 'url';
 import webpack from 'webpack';
 
 // Получаем текущую директорию
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 // Экспортируем конфигурацию
 export default {
   entry: './src/index.js',
   mode: process.env.NODE_ENV || 'development',
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(dirname, './dist'),
     filename: 'bundle.js',
     clean: true,
   },
@@ -63,11 +63,10 @@ export default {
   ],
   devServer: {
     static: {
-      directory: path.resolve(__dirname, 'dist'),
+      directory: path.resolve(dirname, 'dist'),
     },
     compress: true,
     port: 8080,
     hot: true,
   },
 };
-

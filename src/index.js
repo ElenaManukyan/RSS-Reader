@@ -101,13 +101,13 @@ const getRSS = async (url) => {
       });
       return rssData;
     }
-    return false;
   } catch (error) {
     console.log(`error= ${error}`);
     if (error.message === 'Network Error') {
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
     }
+    return false;
   }
 };
 
@@ -189,7 +189,9 @@ function checkEvenRssStream() {
         if (rssData) {
           const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
           const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
-          const filt = rssData.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
+          const filt = rssData.filter((i) => {
+            !titles.includes(i.title) && !desc.includes(i.description)
+          });
           if (filt.length > 0) {
             filt.forEach((item) => {
               item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
@@ -213,29 +215,6 @@ function repeat() {
   checkEvenRssStream();
   setTimeout(repeat, 5000);
 }
-
-/*
-const isNetworkError = async (url) => {
-  try {
-    const response = await axios.get(getUrlWithProxy(url));
-    if (response.status !== 200 || response.data.contents === null || Object.keys(response.data.status.error).length !== 0) {
-      const error = new Error('Ошибка сети');
-      error.type = 'networkError';
-      throw error;
-    } else {
-      return true;
-    }
-  } catch(e) {
-    console.log(`e in isNetworkError func= ${JSON.stringify(e)}`);
-
-    if (e.message === 'Network Error') {
-      watchedState.rssForm.errors = e;
-      watchedState.rssForm.isValid = false;
-    }
-
-  }
-};
-*/
 
 const handler = async () => {
   const urlInput = document.querySelector('#url-input');
