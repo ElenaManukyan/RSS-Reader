@@ -190,7 +190,9 @@ function checkEvenRssStream() {
           const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
           const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
           const filt = rssData.filter((i) => {
-            !titles.includes(i.title) && !desc.includes(i.description)
+            if (!titles.includes(i.title) && !desc.includes(i.description)) {
+              return i;
+            }
           });
           if (filt.length > 0) {
             filt.forEach((item) => {
