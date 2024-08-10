@@ -95,46 +95,47 @@ const getRSS = async (url) => {
         const description = item.querySelector('description').textContent;
         const link = item.querySelector('link').textContent;
         rssData.push({
-          itemsId, title, description, link
+          itemsId, title, description, link,
         });
         itemsId += 1;
       });
       return rssData;
     }
+    return '';
   } catch (error) {
     console.log(`error= ${error}`);
     if (error.message === 'Network Error') {
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
     }
-  } 
-}
+  }
+};
 
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
   const allRssStreams = state.rssForm.data.rssUrls;
   allRssStreams.forEach((RssStream) => {
     getRSS(RssStream)
-    .then((rssData) => {
-      if (rssData) {
-        const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
-        const descriptions = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
-        const filteredRssData = rssData.filter((rssData) => !titles.includes(rssData.title) && !descriptions.includes(rssData.description));
-        if (filteredRssData.length > 0) {
-          filteredRssData.forEach((item) => {
-            item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
-            state.rssForm.data.activeRssUrlsData.push(item);
-          });
-          renderRssLists(state.rssForm.data.activeRssUrlsData);
+      .then((rssData) => {
+        if (rssData) {
+          const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
+          const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
+          const filt = rssData.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
+          if (filt.length > 0) {
+            filt.forEach((item) => {
+              item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
+              state.rssForm.data.activeRssUrlsData.push(item);
+            });
+            renderRssLists(state.rssForm.data.activeRssUrlsData);
+          }
         }
-      }
-    })
-    .catch((error) => {
-      if (error.message === 'Network Error') {
-        watchedState.rssForm.errors = error;
-        watchedState.rssForm.isValid = false;
-      }
-    });
+      })
+      .catch((error) => {
+        if (error.message === 'Network Error') {
+          watchedState.rssForm.errors = error;
+          watchedState.rssForm.isValid = false;
+        }
+      });
   });
   
 }
