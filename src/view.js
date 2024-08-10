@@ -2,7 +2,6 @@ import state from './index.js';
 import i18n from 'i18next';
 import resources from './locales.js';
 
-
 // Locales
 const i18nextInstance = i18n.createInstance();
   await i18nextInstance.init({
@@ -14,13 +13,8 @@ const i18nextInstance = i18n.createInstance();
 const renderErrors = (errors) => {
     const errorP = document.querySelector('.feedback');
     const input = document.querySelector('#url-input');
-    
     input.classList.remove('is-invalid');
     errorP.classList.remove('text-danger', 'text-success');
-
-    // console.log(`errors= ${JSON.stringify(errors, null, 2)}`);
-    //console.log(`errors.isRSSUrlError= ${errors.isRSSUrlError}`);
-
    if (errors.activeUrl) {  
         input.classList.add('is-invalid');
         errorP.textContent = errors.activeUrl.message;
@@ -46,11 +40,7 @@ const renderErrors = (errors) => {
 
 const clearErrors = () => {
     const errorMessage = document.querySelector('.feedback');
-
-
     errorMessage.textContent = `${i18nextInstance.t('successRSS')}`;
-
-
     const invalidInputs = document.querySelectorAll('.is-invalid');
     invalidInputs.forEach((input) => input.classList.remove('is-invalid'));
     errorMessage.classList.remove('text-danger');
