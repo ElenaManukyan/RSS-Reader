@@ -1,5 +1,5 @@
 import state from './index.js';
-import { clearErrors, renderErrors } from './viev.js';
+import { clearErrors, renderErrors } from './view.js';
 
 const render = () => {
   if (state.rssForm.isValid) {

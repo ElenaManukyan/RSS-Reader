@@ -1,4 +1,3 @@
-import state from './index.js';
 import i18n from 'i18next';
 import resources from './locales.js';
 
@@ -50,12 +49,4 @@ const clearErrors = () => {
     urlInput.focus();
 };
 
-const render = () => {
-    if (state.rssForm.isValid) {
-        clearErrors();
-    } else {
-        renderErrors(state.rssForm.errors);
-    }
-};
-
-export { renderErrors, clearErrors, render };
+export { renderErrors, clearErrors };
