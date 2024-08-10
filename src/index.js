@@ -56,17 +56,28 @@ const validate = async (fields, rssUrls) => {
 
 const watchedState = onChange(state, () => {
   import('./view.js')
-  .then((module) => {
-    const { render } = module;
-    render();
-  })
+    .then((module) => {
+      const { render } = module;
+      render();
+    });
 });
+
+const dataParser = (data) => {
+  const parser = new DOMParser();
+  const feedData = parser.parseFromString(data, 'text/xml');
+  const parseerrors = feedData.querySelector('parsererror');
+  console.log(`parseerrors= ${JSON.stringify(parseerrors)}`);
+  if (parseerrors !== null) {
+    const error = parseerrors.textContent;
+    throw new Error(error);
+  }
+};
 
 // Get RSS stream
 const getRSS = async (url) => {
   try {
     if (state.rssForm.isValid) {
-      const response = await axios.get(getUrlWithProxy(url)); 
+      const response = await axios.get(getUrlWithProxy(url));
       dataParser(response.data.contents);
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
@@ -252,17 +263,6 @@ function appendText() {
   textCenter.appendChild(textCenterA);
 }
 appendText();
-
-const dataParser = (data) => {
-  const parser = new DOMParser();
-  const feedData = parser.parseFromString(data, 'text/xml');
-  const parseerrors = feedData.querySelector('parsererror');
-  console.log(`parseerrors= ${JSON.stringify(parseerrors)}`);
-  if (parseerrors !== null) {
-    const error = parseerrors.textContent;
-    throw new Error(error);
-  }
-};
 
 // Render RSS lists
 function renderRssLists(rsses) {
