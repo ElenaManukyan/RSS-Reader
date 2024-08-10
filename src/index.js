@@ -7,26 +7,7 @@ import i18n from 'i18next';
 import axios from 'axios';
 // import { render } from './view.js';
 import resources from './locales.js';
-
-const state = {
-  currentLocale: 'ru',
-  rssForm: {
-    stateForm: 'filling',
-    isValid: false,
-    errors: {},
-    data: {
-      fields: {
-        activeUrl: '',
-      },
-      touchedFields: {
-        url: false,
-      },
-      rssUrls: [],
-      readedIdsPosts: [],
-      activeRssUrlsData: [],
-    },
-  },
-};
+import state from './state.js';
 
 // Locales
 const i18nextInstance = i18n.createInstance();

@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 import resources from './locales.js';
-// import state from './index.js';
+import state from './state.js';
 
 // Locales
 const i18nextInstance = i18n.createInstance();
@@ -51,14 +51,11 @@ const clearErrors = () => {
 };
 
 const render = () => {
-  import('./index.js').then((module) => {
-    const { state } = module;
-    if (state.rssForm.isValid) {
-      clearErrors();
-    } else {
-      renderErrors(state.rssForm.errors);
-    }
-  });
+  if (state.rssForm.isValid) {
+    clearErrors();
+  } else {
+    renderErrors(state.rssForm.errors);
+  }
 };
 
 export { renderErrors, clearErrors, render };
