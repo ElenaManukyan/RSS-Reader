@@ -390,7 +390,6 @@ function handleNewElements(node) {
       reject(error);
     }
   });
-  
 }
 
 // Создаю новый MutationObserver
@@ -399,9 +398,9 @@ const observer = new MutationObserver((mutations) => {
     mutation.addedNodes.forEach((node) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         handleNewElements(node)
-        .catch((error) => {
-          console.error('Ошибка в handleNewElements:', error);
-        });
+          .catch((error) => {
+            console.error('Ошибка в handleNewElements:', error);
+          });
       }
     });
   });
@@ -410,7 +409,7 @@ const observer = new MutationObserver((mutations) => {
 // Настраиваю и запускаю MutationObserver
 observer.observe(document.querySelector('.posts'), {
   childList: true,
-  subtree: true
+  subtree: true,
 });
 
 export default state;
