@@ -47,22 +47,28 @@ const getUrlWithProxy = (url) => {
 };
 
 
-const isRSSUrl = async (url) => {
-  try {
-    const response = await axios.get(getUrlWithProxy(url));
+const isRSSUrl = (rawData) => {
+  //try {
+    //const response = await axios.get(getUrlWithProxy(url));
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
-    return xmlDoc.getElementsByTagName('rss').length > 0;
-  } catch (error) {
+    const xmlDoc = parser.parseFromString(rawData.data.contents, 'application/xml');
+    if (xmlDoc.getElementsByTagName('rss').length > 0) {
+      return xmlDoc;
+    } else {
+      const error = new Error();
+      error.type = 'noRSS';
+      throw error;
+    }
+  //} catch (error) {
 
-    if (error.message === 'Network Error') {
+    /*if (error.message === 'Network Error') {
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
-    }
+    }*/
     
 
     // return false;
-  }
+  //}
 };
 
 
@@ -160,40 +166,43 @@ const handler = async () => {
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-  .then((data0) => {
+  .then(async (data0) => {
     console.log(`data0= ${JSON.stringify(data0, null, 2)}`);
       if (Object.keys(data0).length === 0) {
-        const res = isNetworkError(watchedState.rssForm.data.fields.activeUrl)
-        return res;
+        //const res = isNetworkError(watchedState.rssForm.data.fields.activeUrl)
+        //return res;
+        const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
+        return response;
       } else {
         throw data0;
       }
     })  
     .then(async (data1) => {
       console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
-      if (!data1) {
-        const result = await isRSSUrl(watchedState.rssForm.data.fields.activeUrl);
+      //if (!data1) {
+        const result = isRSSUrl(data1);
+
         return result;
-      } else {
+      //} else {
         //watchedState.rssForm.isValid = false;
-        const error = new Error('Network error!');
-        error.type = 'networkError';
-        throw error;
-      }
+        //const error = new Error('Network error!');
+       //error.type = 'networkError';
+        //throw error;
+      //}
     })
     .then(function (data2) {
       console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
-      if (data2) {
+      //if (data2) {
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
         watchedState.rssForm.isValid = true;
         repeat();
-      } else {
+      //} else {
         //watchedState.rssForm.isValid = false;
-        const error = new Error('URL is not RSS!');
-        error.type = 'noRSS';
-        error.errorMessage = 'URL is not RSS!';
-        throw error;
-      }
+        //const error = new Error('URL is not RSS!');
+        //error.type = 'noRSS';
+        //error.errorMessage = 'URL is not RSS!';
+        //throw error;
+      //}
     })
     .catch(function (error) {
       console.log(`error catch block= ${JSON.stringify(error, null, 2)}`);
