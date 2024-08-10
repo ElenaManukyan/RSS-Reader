@@ -101,6 +101,7 @@ const getRSS = async (url) => {
       });
       return rssData;
     }
+    return false;
   } catch (error) {
     console.log(`error= ${error}`);
     if (error.message === 'Network Error') {
@@ -193,6 +194,7 @@ function checkEvenRssStream() {
             if (!titles.includes(i.title) && !desc.includes(i.description)) {
               return i;
             }
+            return;
           });
           if (filt.length > 0) {
             filt.forEach((item) => {
@@ -210,7 +212,6 @@ function checkEvenRssStream() {
         }
       });
   });
-  
 }
 
 function repeat() {
@@ -220,8 +221,9 @@ function repeat() {
 
 const handler = async () => {
   const urlInput = document.querySelector('#url-input');
-  const value = urlInput.value;
-  const name = urlInput.name;
+  const { value, name } = urlInput;
+  // const value = urlInput.value;
+  // const name = urlInput.name;
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
