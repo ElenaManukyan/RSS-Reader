@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import onChange from 'on-change';
 import i18n from 'i18next';
 import axios from 'axios';
-import render from './render.js';
+// import { render } from './view.js';
 import resources from './locales.js';
 
 const state = {
@@ -74,7 +74,11 @@ const validate = async (fields, rssUrls) => {
 };
 
 const watchedState = onChange(state, () => {
-  render();
+  import('./view.js')
+  .then((module) => {
+    const { render } = module;
+    render();
+  })
 });
 
 // Get RSS stream
