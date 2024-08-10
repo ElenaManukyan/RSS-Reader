@@ -3,13 +3,10 @@ import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';
 import onChange from 'on-change';
-import { render } from './view.js';
 import i18n from 'i18next';
-import resources from './locales.js';
 import axios from 'axios';
-//import RSSParser from 'rss-parser';
-
-// const regex = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$/;
+import { render } from './view.js';
+import resources from './locales.js';
 
 const state = {
   currentLocale: 'ru',
