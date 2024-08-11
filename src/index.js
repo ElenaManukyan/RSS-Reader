@@ -132,9 +132,8 @@ function renderRssLists(rsses) {
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     const a = document.createElement('a');
     a.setAttribute('href', `${rss.link}`);
-    const aClass = state.rssForm.data.readedIdsPosts.includes(rss.itemsId) ? 'fw-normal' : 'fw-bold';
+    const aClass = watchedState.rssForm.data.readedIdsPosts.includes(rss.itemsId) ? 'fw-normal' : 'fw-bold';
     a.classList.add(aClass);
-    // if (state.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
     if (watchedState.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
       a.style = 'color: #6c757d';
     }
@@ -325,7 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelector('.posts').addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const buttonId = Number(event.target.getAttribute('data-id'));
-    const filtData = state.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === buttonId)[0];
+    // const filtData = state.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === buttonId)[0];
+    const filtData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === buttonId)[0];
     document.querySelector('.modal-title').textContent = filtData.title;
     document.querySelector('.modal-body').textContent = filtData.description;
     document.querySelector('.full-article').setAttribute('href', `${filtData.link}`);
@@ -333,7 +333,8 @@ document.querySelector('.posts').addEventListener('click', (event) => {
     clickedListElement.classList.remove('fw-bold');
     clickedListElement.classList.add('fw-normal');
     clickedListElement.style = 'color: #6c757d';
-    state.rssForm.data.readedIdsPosts.push(buttonId);
+    // state.rssForm.data.readedIdsPosts.push(buttonId);
+    watchedState.rssForm.data.readedIdsPosts.push(buttonId);
   }
 });
 
@@ -372,4 +373,3 @@ observer.observe(document.querySelector('.posts'), {
   subtree: true,
 });
 
-export default state;
