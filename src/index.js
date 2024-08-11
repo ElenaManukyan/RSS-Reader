@@ -323,16 +323,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.querySelector('.posts').addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
-    const buttonId = Number(event.target.getAttribute('data-id'));
-    const filtData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === buttonId)[0];
-    document.querySelector('.modal-title').textContent = filtData.title;
-    document.querySelector('.modal-body').textContent = filtData.description;
-    document.querySelector('.full-article').setAttribute('href', `${filtData.link}`);
-    const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(buttonId)}"]`);
+    const btnId = Number(event.target.getAttribute('data-id'));
+    const fData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];
+    document.querySelector('.modal-title').textContent = fData.title;
+    document.querySelector('.modal-body').textContent = fData.description;
+    document.querySelector('.full-article').setAttribute('href', `${fData.link}`);
+    const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
     clickedListElement.classList.remove('fw-bold');
     clickedListElement.classList.add('fw-normal');
     clickedListElement.style = 'color: #6c757d';
-    watchedState.rssForm.data.readedIdsPosts.push(buttonId);
+    watchedState.rssForm.data.readedIdsPosts.push(btnId);
   }
 });
 
