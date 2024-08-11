@@ -324,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelector('.posts').addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const buttonId = Number(event.target.getAttribute('data-id'));
-    // const filtData = state.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === buttonId)[0];
     const filtData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === buttonId)[0];
     document.querySelector('.modal-title').textContent = filtData.title;
     document.querySelector('.modal-body').textContent = filtData.description;
@@ -333,7 +332,6 @@ document.querySelector('.posts').addEventListener('click', (event) => {
     clickedListElement.classList.remove('fw-bold');
     clickedListElement.classList.add('fw-normal');
     clickedListElement.style = 'color: #6c757d';
-    // state.rssForm.data.readedIdsPosts.push(buttonId);
     watchedState.rssForm.data.readedIdsPosts.push(buttonId);
   }
 });
@@ -372,4 +370,3 @@ observer.observe(document.querySelector('.posts'), {
   childList: true,
   subtree: true,
 });
-

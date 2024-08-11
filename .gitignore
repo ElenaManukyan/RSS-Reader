@@ -6,3 +6,4 @@ jest.config.js
 sum.test.js
 babel.config.js
 /__fixtures__/
+/dist/
