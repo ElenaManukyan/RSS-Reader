@@ -134,7 +134,8 @@ function renderRssLists(rsses) {
     a.setAttribute('href', `${rss.link}`);
     const aClass = state.rssForm.data.readedIdsPosts.includes(rss.itemsId) ? 'fw-normal' : 'fw-bold';
     a.classList.add(aClass);
-    if (state.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
+    // if (state.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
+    if (watchedState.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
       a.style = 'color: #6c757d';
     }
     a.setAttribute('data-id', `${rss.itemsId}`);
