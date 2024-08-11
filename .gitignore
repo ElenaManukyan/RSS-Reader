@@ -1,9 +1,3 @@
 /node_modules/
-test.xml
-feeds.html
-jest.config.js
-/__tests__/
-sum.test.js
 babel.config.js
-/__fixtures__/
 /dist/
