@@ -200,6 +200,7 @@ function checkEvenRssStream() {
         }
       })
       .catch((error) => {
+        console.log(`error= ${JSON.stringify(error, null, 2)}`);
         if (error.message === 'Network Error') {
           watchedState.rssForm.errors = error;
           watchedState.rssForm.isValid = false;
