@@ -14,6 +14,9 @@ const state = {
       rssUrls: [],
       readedIdsPosts: [],
       activeRssUrlsData: [],
+      fData: '',
+      btnId: '',
+      clickedListElement: {},
     },
   },
 };

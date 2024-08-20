@@ -13,5 +13,8 @@ export default {
     successRSS: 'RSS успешно загружен',
     invalidUrl: 'Ссылка должна быть валидным URL',
     isNetworkError: 'Ошибка сети',
+    posts: 'Посты',
+    viewing: 'Просмотр',
+    feeds: 'Фиды',
   },
 };
