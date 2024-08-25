@@ -174,7 +174,7 @@ function repeat() {
 }
 
 const handler = async () => {
-  const urlInput =  elements.urlInput;
+  const { urlInput } = elements;
   const { value, name } = urlInput;
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
@@ -246,7 +246,7 @@ function repeatCheck() {
 appendText(elements);
 
 document.addEventListener('DOMContentLoaded', () => {
-  const rssForm =  elements.rssForm;
+  const { rssForm } = elements;
   rssForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     await handler();
@@ -257,9 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
 elements.posts.addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const btnId = Number(event.target.getAttribute('data-id'));
-    const fData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];  
+    const fD = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];
     watchedState.rssForm.data.clickedListElements.add(btnId);
-    renderingTextModal(fData, btnId);
+    renderingTextModal(fD, btnId);
   }
 });
 
