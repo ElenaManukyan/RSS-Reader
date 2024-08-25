@@ -7,7 +7,7 @@ import i18n from 'i18next';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import resources from './locales.js';
-import { state, elements } from './state.js';
+import state from './state.js';
 import { renderRssLists, appendText } from './view.js';
 
 // Locales
@@ -17,6 +17,25 @@ await i18nextInstance.init({
   debug: true,
   resources,
 });
+
+const elements = {
+  modalTitle: document.querySelector('.modal-title'),
+  modalBody: document.querySelector('.modal-body'),
+  fullArticle: document.querySelector('.full-article'),
+  urlInput: document.querySelector('#url-input'),
+  rssForm: document.querySelector('.rss-form'),
+  posts: document.querySelector('.posts'),
+  h1RuName: document.querySelector('.display-3'),
+  leadP: document.querySelector('.lead'),
+  formFloatingDivLabel: document.querySelector('.form-floating label'),
+  textMutedP: document.querySelector('.text-muted'),
+  btn: document.querySelector('[aria-label="add"]'),
+  textCenter: document.querySelector('.text-center'),
+  textCenterA: document.createElement('a'),
+  btnPrimary: document.querySelector('.btn-primary'),
+  btnSecondary: document.querySelector('.btn-secondary'),
+  title: document.querySelector('title'),
+};
 
 const getUrlWithProxy = (url) => {
   const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
