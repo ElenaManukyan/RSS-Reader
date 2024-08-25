@@ -5,10 +5,10 @@ import * as yup from 'yup';
 import onChange from 'on-change';
 import i18n from 'i18next';
 import axios from 'axios';
-import resources from './locales.js';
-import state from './state.js';
-import { renderRssLists, appendText } from './view.js';
 import { v4 as uuidv4 } from 'uuid';
+import resources from './locales.js';
+import { state, elements } from './state.js';
+import { renderRssLists, appendText } from './view.js';
 
 // Locales
 const i18nextInstance = i18n.createInstance();
@@ -53,25 +53,6 @@ const validate = async (fields, rssUrls) => {
     const errors = keyBy(e.inner, 'path');
     throw errors;
   }
-};
-
-const elements = {
-  'modalTitle': document.querySelector('.modal-title'),
-  'modalBody': document.querySelector('.modal-body'),
-  'fullArticle': document.querySelector('.full-article'),
-  'urlInput': document.querySelector('#url-input'),
-  'rssForm': document.querySelector('.rss-form'),
-  'posts': document.querySelector('.posts'),
-  'h1RuName': document.querySelector('.display-3'),
-  'leadP': document.querySelector('.lead'),
-  'formFloatingDivLabel': document.querySelector('.form-floating label'),
-  'textMutedP': document.querySelector('.text-muted'),
-  'btn': document.querySelector('[aria-label="add"]'),
-  'textCenter': document.querySelector('.text-center'),
-  'textCenterA': document.createElement('a'),
-  'btnPrimary': document.querySelector('.btn-primary'),
-  'btnSecondary': document.querySelector('.btn-secondary'),
-  'title': document.querySelector('title'),
 };
 
 function renderingTextModal(fData, btnId, elements) {
@@ -150,7 +131,7 @@ const getRSS = async (url) => {
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
   const allRssStreams = state.rssForm.data.rssUrls;
-  console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
   allRssStreams.forEach((RssStream) => {
     getRSS(RssStream)
       .then((d) => {
@@ -268,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 elements.posts.addEventListener('click', (event) => {
-  console.log(`state= ${JSON.stringify(state, null, 2)}`);
+  // console.log(`state= ${JSON.stringify(state, null, 2)}`);
   if (event.target.classList.contains('btn-sm')) {
     const btnId = Number(event.target.getAttribute('data-id'));
     const fData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];  
