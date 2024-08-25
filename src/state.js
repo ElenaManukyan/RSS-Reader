@@ -12,11 +12,8 @@ const state = {
         url: false,
       },
       rssUrls: [],
-      readedIdsPosts: [],
       activeRssUrlsData: [],
-      fData: '',
-      btnId: '',
-      clickedListElement: {},
+      clickedListElements: new Set(),
     },
   },
 };

@@ -8,6 +8,7 @@ import axios from 'axios';
 import resources from './locales.js';
 import state from './state.js';
 import { renderRssLists, appendText } from './view.js';
+import { v4 as uuidv4 } from 'uuid';
 
 // Locales
 const i18nextInstance = i18n.createInstance();
@@ -54,21 +55,35 @@ const validate = async (fields, rssUrls) => {
   }
 };
 
-function renderingTextModal(fData, btnId) {
+const elements = {
+  'modalTitle': document.querySelector('.modal-title'),
+  'modalBody': document.querySelector('.modal-body'),
+  'fullArticle': document.querySelector('.full-article'),
+  'urlInput': document.querySelector('#url-input'),
+  'rssForm': document.querySelector('.rss-form'),
+  'posts': document.querySelector('.posts'),
+  'h1RuName': document.querySelector('.display-3'),
+  'leadP': document.querySelector('.lead'),
+  'formFloatingDivLabel': document.querySelector('.form-floating label'),
+  'textMutedP': document.querySelector('.text-muted'),
+  'btn': document.querySelector('[aria-label="add"]'),
+  'textCenter': document.querySelector('.text-center'),
+  'textCenterA': document.createElement('a'),
+  'btnPrimary': document.querySelector('.btn-primary'),
+  'btnSecondary': document.querySelector('.btn-secondary'),
+  'title': document.querySelector('title'),
+};
 
-  //console.log(`clickedListElement.href= ${JSON.stringify(clickedListElement.href, null, 2)}`);
-
-  document.querySelector('.modal-title').textContent = fData.title;
-   document.querySelector('.modal-body').textContent = fData.description;
-  document.querySelector('.full-article').setAttribute('href', `${fData.link}`);
-   const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
-    
-   console.log(`clickedListElement.href= ${JSON.stringify(clickedListElement.href, null, 2)}`);
-  
-   clickedListElement.classList.remove('fw-bold');
-   clickedListElement.classList.add('fw-normal');
-   clickedListElement.style = 'color: #6c757d';
+function renderingTextModal(fData, btnId, elements) {
+  elements.modalTitle.textContent = fData.title;
+  elements.modalBody.textContent = fData.description;
+  elements.fullArticle.setAttribute('href', `${fData.link}`);
+  const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
+  clickedListElement.classList.remove('fw-bold');
+  clickedListElement.classList.add('fw-normal');
+  clickedListElement.style = 'color: #6c757d';
 }
+
 
 const watchedState = onChange(state, () => {
   import('./view.js')
@@ -76,20 +91,13 @@ const watchedState = onChange(state, () => {
       const { render } = module;
       render();
     });
-  
-    /*
-  if (state.rssForm.data.fData) {
-    renderingTextModal(state.rssForm.data.fData, state.rssForm.data.btnId);
-  }
-    */
-
+    
 });
 
 const dataParser = (data) => {
   const parser = new DOMParser();
   const feedData = parser.parseFromString(data, 'text/xml');
-  const parseerrors = feedData.querySelector('parsererror');
-  //console.log(`parseerrors= ${JSON.stringify(parseerrors)}`);
+  const parseerrors = feedData.querySelector('parsererror'); // +
   if (parseerrors !== null) {
     const error = parseerrors.textContent;
     throw new Error(error);
@@ -104,15 +112,19 @@ const getRSS = async (url) => {
       dataParser(response.data.contents);
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
-      const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent;
-      const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent;
-      const items = xmlDoc.querySelectorAll('item');
+      const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent; // +
+      const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent; // +
+      const items = xmlDoc.querySelectorAll('item');  // +
       const rssData = [];
-      let itemsId = 0;
+      // То, что закомментировано, это старая версия
+      // let itemsId = 0;
+      let itemsId = uuidv4();
       rssData.push({ itemsId, mainTitle });
-      itemsId += 1;
+      // itemsId += 1;
+      itemsId = uuidv4();
       rssData.push({ itemsId, mainDescription });
-      itemsId += 1;
+      // itemsId += 1;
+      itemsId = uuidv4();
       items.forEach((item) => {
         const title = item.querySelector('title').textContent;
         const description = item.querySelector('description').textContent;
@@ -120,13 +132,13 @@ const getRSS = async (url) => {
         rssData.push({
           itemsId, title, description, link,
         });
-        itemsId += 1;
+        // itemsId += 1;
+        itemsId = uuidv4();
       });
       return rssData;
     }
     return false;
   } catch (error) {
-    // console.log(`error= ${error}`);
     if (error.message === 'Network Error') {
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
@@ -135,11 +147,10 @@ const getRSS = async (url) => {
   }
 };
 
-
-
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
   const allRssStreams = state.rssForm.data.rssUrls;
+  console.log(`state= ${JSON.stringify(state, null, 2)}`);
   allRssStreams.forEach((RssStream) => {
     getRSS(RssStream)
       .then((d) => {
@@ -172,7 +183,7 @@ function repeat() {
 }
 
 const handler = async () => {
-  const urlInput = document.querySelector('#url-input');
+  const urlInput =  elements.urlInput; // +
   const { value, name } = urlInput;
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
@@ -245,42 +256,24 @@ function repeatCheck() {
   setTimeout(repeatCheck, 1000);
 }
 
-appendText();
+appendText(i18nextInstance, elements);
 
 document.addEventListener('DOMContentLoaded', () => {
-  const rssForm = document.querySelector('.rss-form');
-  // const rssFormInput = rssForm.querySelector('#url-input');
+  const rssForm =  elements.rssForm;
   rssForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    // console.log(`rssFormInput.value= ${rssFormInput.value}`);
     await handler();
     repeatCheck();
   });
 });
 
-document.querySelector('.posts').addEventListener('click', (event) => {
+elements.posts.addEventListener('click', (event) => {
+  console.log(`state= ${JSON.stringify(state, null, 2)}`);
   if (event.target.classList.contains('btn-sm')) {
     const btnId = Number(event.target.getAttribute('data-id'));
-    const fData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];
-    
-    //const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
-    //console.log(`fData= ${fData}`);
-
-    //document.querySelector('.modal-title').textContent = fData.title; // !!!
-    //document.querySelector('.modal-body').textContent = fData.description; // !!!
-    //document.querySelector('.full-article').setAttribute('href', `${fData.link}`); // !!!
-    //const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`); // !!!
-    //clickedListElement.classList.remove('fw-bold'); // !!!
-    //clickedListElement.classList.add('fw-normal'); // !!!
-   // clickedListElement.style = 'color: #6c757d'; // !!!
-    watchedState.rssForm.data.readedIdsPosts.push(btnId);
-    watchedState.rssForm.data.fData = fData;
-    watchedState.rssForm.data.btnId = btnId;
-    //watchedState.rssForm.data.clickedListElement = clickedListElement;
-  
-    renderingTextModal(state.rssForm.data.fData, state.rssForm.data.btnId);
-
-    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+    const fData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];  
+    watchedState.rssForm.data.clickedListElements.add(btnId);
+    renderingTextModal(fData, btnId, elements);
   }
 });
 
@@ -314,7 +307,7 @@ const observer = new MutationObserver((mutations) => {
 });
 
 // Настраиваю и запускаю MutationObserver
-observer.observe(document.querySelector('.posts'), {
+observer.observe(elements.posts, {
   childList: true,
   subtree: true,
 });

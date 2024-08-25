@@ -78,11 +78,9 @@ function renderRssLists(rsses) {
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
     const a = document.createElement('a');
     a.setAttribute('href', `${rss.link}`);
-    // const aClass = watchedState.rssForm.data.readedIdsPosts.includes(rss.itemsId) ? 'fw-normal' : 'fw-bold';
-    const aClass = state.rssForm.data.readedIdsPosts.includes(rss.itemsId) ? 'fw-normal' : 'fw-bold';
+    const aClass = state.rssForm.data.clickedListElements.has(rss.itemsId) ? 'fw-normal' : 'fw-bold';
     a.classList.add(aClass);
-    // if (watchedState.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
-    if (state.rssForm.data.readedIdsPosts.includes(rss.itemsId)) {
+    if (state.rssForm.data.clickedListElements.has(rss.itemsId)) {
       a.style = 'color: #6c757d';
     }
     a.setAttribute('data-id', `${rss.itemsId}`);
@@ -130,24 +128,20 @@ function renderRssLists(rsses) {
 }
 
 // Locales
-function appendText() {
-  const h1RuName = document.querySelector('.display-3');
-  h1RuName.textContent = i18nextInstance.t('h1RuName');
-  const leadP = document.querySelector('.lead');
-  leadP.textContent = i18nextInstance.t('leadP');
-  const formFloatingDivLabel = document.querySelector('.form-floating label');
-  formFloatingDivLabel.textContent = i18nextInstance.t('formFloatingDivLabel');
-  const textMutedP = document.querySelector('.text-muted');
-  textMutedP.textContent = i18nextInstance.t('textMutedP');
-  const btn = document.querySelector('[aria-label="add"]');
-  btn.textContent = i18nextInstance.t('btn');
-  const textCenter = document.querySelector('.text-center');
-  textCenter.textContent = i18nextInstance.t('textCenter');
-  const textCenterA = document.createElement('a');
-  textCenterA.setAttribute('href', '');
-  textCenterA.setAttribute('target', '_blank');
-  textCenterA.textContent = i18nextInstance.t('textCenterA');
-  textCenter.appendChild(textCenterA);
+function appendText(i18nextInstance, elements) {
+  elements.h1RuName.textContent = i18nextInstance.t('h1RuName');
+  elements.leadP.textContent = i18nextInstance.t('leadP');
+  elements.formFloatingDivLabel.textContent = i18nextInstance.t('formFloatingDivLabel');
+  elements.textMutedP.textContent = i18nextInstance.t('textMutedP');
+  elements.btn.textContent = i18nextInstance.t('btn');
+  elements.textCenter.textContent = i18nextInstance.t('textCenter');
+  elements.textCenterA.setAttribute('href', '');
+  elements.textCenterA.setAttribute('target', '_blank');
+  elements.textCenterA.textContent = i18nextInstance.t('textCenterA');
+  elements.textCenter.appendChild(elements.textCenterA);
+  elements.btnPrimary.textContent = i18nextInstance.t('btnPrimary');
+  elements.btnSecondary.textContent = i18nextInstance.t('btnSecondary');
+  elements.title.textContent = i18nextInstance.t('title');
 }
 
 export { renderErrors, clearErrors, render, renderRssLists, appendText };

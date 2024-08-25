@@ -16,5 +16,8 @@ export default {
     posts: 'Посты',
     viewing: 'Просмотр',
     feeds: 'Фиды',
+    btnPrimary: 'Читать полностью',
+    btnSecondary: 'Закрыть',
+    title: 'Hexlet Frontend Project',
   },
 };
