@@ -128,7 +128,7 @@ function renderRssLists(rsses) {
 }
 
 // Locales
-function appendText(i18nextInstance, elements) {
+function appendText(elements) {
   elements.h1RuName.textContent = i18nextInstance.t('h1RuName');
   elements.leadP.textContent = i18nextInstance.t('leadP');
   elements.formFloatingDivLabel.textContent = i18nextInstance.t('formFloatingDivLabel');
@@ -144,4 +144,10 @@ function appendText(i18nextInstance, elements) {
   elements.title.textContent = i18nextInstance.t('title');
 }
 
-export { renderErrors, clearErrors, render, renderRssLists, appendText };
+export { 
+  renderErrors,
+  clearErrors,
+  render,
+  renderRssLists,
+  appendText,
+};

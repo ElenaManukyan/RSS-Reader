@@ -74,7 +74,7 @@ const validate = async (fields, rssUrls) => {
   }
 };
 
-function renderingTextModal(fData, btnId, elements) {
+function renderingTextModal(fData, btnId) {
   elements.modalTitle.textContent = fData.title;
   elements.modalBody.textContent = fData.description;
   elements.fullArticle.setAttribute('href', `${fData.link}`);
@@ -84,14 +84,12 @@ function renderingTextModal(fData, btnId, elements) {
   clickedListElement.style = 'color: #6c757d';
 }
 
-
 const watchedState = onChange(state, () => {
   import('./view.js')
     .then((module) => {
       const { render } = module;
       render();
     });
-    
 });
 
 const dataParser = (data) => {
@@ -114,16 +112,12 @@ const getRSS = async (url) => {
       const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
       const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent; // +
       const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent; // +
-      const items = xmlDoc.querySelectorAll('item');  // +
+      const items = xmlDoc.querySelectorAll('item');
       const rssData = [];
-      // То, что закомментировано, это старая версия
-      // let itemsId = 0;
       let itemsId = uuidv4();
       rssData.push({ itemsId, mainTitle });
-      // itemsId += 1;
       itemsId = uuidv4();
       rssData.push({ itemsId, mainDescription });
-      // itemsId += 1;
       itemsId = uuidv4();
       items.forEach((item) => {
         const title = item.querySelector('title').textContent;
@@ -132,7 +126,6 @@ const getRSS = async (url) => {
         rssData.push({
           itemsId, title, description, link,
         });
-        // itemsId += 1;
         itemsId = uuidv4();
       });
       return rssData;
@@ -150,7 +143,6 @@ const getRSS = async (url) => {
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
   const allRssStreams = state.rssForm.data.rssUrls;
-  //console.log(`state= ${JSON.stringify(state, null, 2)}`);
   allRssStreams.forEach((RssStream) => {
     getRSS(RssStream)
       .then((d) => {
@@ -168,7 +160,6 @@ function checkEvenRssStream() {
         }
       })
       .catch((error) => {
-        // console.log(`error= ${JSON.stringify(error, null, 2)}`);
         if (error.message === 'Network Error') {
           watchedState.rssForm.errors = error;
           watchedState.rssForm.isValid = false;
@@ -183,13 +174,12 @@ function repeat() {
 }
 
 const handler = async () => {
-  const urlInput =  elements.urlInput; // +
+  const urlInput =  elements.urlInput;
   const { value, name } = urlInput;
   watchedState.rssForm.data.fields.activeUrl = value;
   watchedState.rssForm.data.touchedFields[name] = true;
   validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
     .then(async (data0) => {
-      // console.log(`data0= ${JSON.stringify(data0, null, 2)}`);
       if (!Object.keys(data0).length === 0) {
         throw data0;
       }
@@ -197,18 +187,15 @@ const handler = async () => {
       return response;
     })
     .then(async (data1) => {
-      // console.log(`data1= ${JSON.stringify(data1, null, 2)}`);
       const result = isRSSUrl(data1);
       return result;
     })
     .then(() => {
-      // console.log(`data2= ${JSON.stringify(data2, null, 2)}`);
       watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
       watchedState.rssForm.isValid = true;
       repeat();
     })
     .catch((error) => {
-      // console.log(`error catch block= ${JSON.stringify(error, null, 2)}`);
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
     });
@@ -256,7 +243,7 @@ function repeatCheck() {
   setTimeout(repeatCheck, 1000);
 }
 
-appendText(i18nextInstance, elements);
+appendText(elements);
 
 document.addEventListener('DOMContentLoaded', () => {
   const rssForm =  elements.rssForm;
@@ -268,12 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 elements.posts.addEventListener('click', (event) => {
-  // console.log(`state= ${JSON.stringify(state, null, 2)}`);
   if (event.target.classList.contains('btn-sm')) {
     const btnId = Number(event.target.getAttribute('data-id'));
     const fData = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];  
     watchedState.rssForm.data.clickedListElements.add(btnId);
-    renderingTextModal(fData, btnId, elements);
+    renderingTextModal(fData, btnId);
   }
 });
 
