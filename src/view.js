@@ -144,7 +144,7 @@ function appendText(elements) {
   elements.title.textContent = i18nextInstance.t('title');
 }
 
-export { 
+export {
   renderErrors,
   clearErrors,
   render,
