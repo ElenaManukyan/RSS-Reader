@@ -1,7 +1,7 @@
 import i18n from 'i18next';
+import _ from 'lodash';
 import resources from './locales.js';
 import state from './state.js';
-import _ from 'lodash';
 
 // Locales
 const i18nextInstance = i18n.createInstance();
