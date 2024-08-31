@@ -3,3 +3,9 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/d575f795153d8c37a66f/maintainability)](https://codeclimate.com/github/ElenaManukyan/frontend-project-11/maintainability)
 ### Link to website:
 [https://frontend-project-11-chi-snowy.vercel.app/](https://frontend-project-11-delta-brown.vercel.app/)
+## Installation:
+`make install`
+## How to run the tests:
+`make test`
+## How to run the Eslint:
+`make lint`
