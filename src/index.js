@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import resources from './locales.js';
 import state from './state.js';
 import { renderRssLists, appendText } from './view.js';
+import _ from 'lodash';
 
 const i18nextInstance = i18n.createInstance();
 await i18nextInstance.init({
@@ -151,7 +152,7 @@ function checkEvenRssStream() {
           const filt = d.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
           if (filt.length > 0) {
             filt.forEach((item) => {
-              const currentItem = item;
+              const currentItem = _.cloneDeep(item);
               currentItem.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
               state.rssForm.data.activeRssUrlsData.push(currentItem);
             });
