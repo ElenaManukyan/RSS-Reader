@@ -4,10 +4,8 @@
 ## Link to website:
 [https://frontend-project-11-chi-snowy.vercel.app/](https://frontend-project-11-delta-brown.vercel.app/)
 ## Installation:
-```
-git clone git@github.com:ElenaManukyan/frontend-project-11.git
-make install
-```
+1. `git clone git@github.com:ElenaManukyan/frontend-project-11.git`
+2. `make install`
 ## How to run the tests:
 `make test`
 ## How to run the Eslint:
