@@ -10,7 +10,6 @@ import resources from './locales.js';
 import state from './state.js';
 import { renderRssLists, appendText } from './view.js';
 
-// Locales
 const i18nextInstance = i18n.createInstance();
 await i18nextInstance.init({
   lng: 'ru',
