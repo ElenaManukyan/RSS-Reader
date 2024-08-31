@@ -151,8 +151,9 @@ function checkEvenRssStream() {
           const filt = d.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
           if (filt.length > 0) {
             filt.forEach((item) => {
-              item.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
-              state.rssForm.data.activeRssUrlsData.push(item);
+              const currentItem = item;
+              currentItem.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
+              state.rssForm.data.activeRssUrlsData.push(currentItem);
             });
             renderRssLists(state.rssForm.data.activeRssUrlsData);
           }

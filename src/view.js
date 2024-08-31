@@ -129,19 +129,29 @@ function renderRssLists(rsses) {
 
 // Locales
 function appendText(elements) {
-  elements.h1RuName.textContent = i18nextInstance.t('h1RuName');
-  elements.leadP.textContent = i18nextInstance.t('leadP');
-  elements.formFloatingDivLabel.textContent = i18nextInstance.t('formFloatingDivLabel');
-  elements.textMutedP.textContent = i18nextInstance.t('textMutedP');
-  elements.btn.textContent = i18nextInstance.t('btn');
-  elements.textCenter.textContent = i18nextInstance.t('textCenter');
-  elements.textCenterA.setAttribute('href', '');
-  elements.textCenterA.setAttribute('target', '_blank');
-  elements.textCenterA.textContent = i18nextInstance.t('textCenterA');
-  elements.textCenter.appendChild(elements.textCenterA);
-  elements.btnPrimary.textContent = i18nextInstance.t('btnPrimary');
-  elements.btnSecondary.textContent = i18nextInstance.t('btnSecondary');
-  elements.title.textContent = i18nextInstance.t('title');
+  const h1RuName = elements.h1RuName;
+  h1RuName.textContent = i18nextInstance.t('h1RuName');
+  const leadP = elements.leadP;
+  leadP.textContent = i18nextInstance.t('leadP');
+  const formFloatingDivLabel = elements.formFloatingDivLabel;
+  formFloatingDivLabel.textContent = i18nextInstance.t('formFloatingDivLabel');
+  const textMutedP = elements.textMutedP;
+  textMutedP.textContent = i18nextInstance.t('textMutedP');
+  const btn = elements.btn;
+  btn.textContent = i18nextInstance.t('btn');
+  const textCenter = elements.textCenter;
+  textCenter.textContent = i18nextInstance.t('textCenter');
+  const textCenterA = elements.textCenterA;
+  textCenterA.setAttribute('href', '');
+  textCenterA.setAttribute('target', '_blank');
+  textCenterA.textContent = i18nextInstance.t('textCenterA');
+  textCenter.appendChild(elements.textCenterA);
+  const btnPrimary = elements.btnPrimary;
+  btnPrimary.textContent = i18nextInstance.t('btnPrimary');
+  const btnSecondary = elements.btnSecondary;
+  btnSecondary.textContent = i18nextInstance.t('btnSecondary');
+  const title = elements.title;
+  title.textContent = i18nextInstance.t('title');
 }
 
 export {
