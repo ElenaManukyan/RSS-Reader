@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import resources from './locales.js';
 import {
-  renderRssLists, appendText, renderErrors, clearErrors
+  renderRssLists, appendText, renderErrors, clearErrors,
 } from './view.js';
 
 const i18nextInstance = i18n.createInstance();
