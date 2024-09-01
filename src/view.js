@@ -1,7 +1,6 @@
 import i18n from 'i18next';
 import _ from 'lodash';
 import resources from './locales.js';
-import state from './state.js';
 
 // Locales
 const i18nextInstance = i18n.createInstance();
@@ -51,16 +50,8 @@ const clearErrors = () => {
   urlInput.focus();
 };
 
-const render = () => {
-  if (state.rssForm.isValid) {
-    clearErrors();
-  } else {
-    renderErrors(state.rssForm.errors);
-  }
-};
-
 // Render RSS lists
-function renderRssLists(rsses) {
+function renderRssLists(rsses, state) {
   document.querySelector('.posts').innerHTML = '';
   document.querySelector('.feeds').innerHTML = '';
   const divCard = document.createElement('div');
@@ -149,7 +140,6 @@ function appendText(elements) {
 export {
   renderErrors,
   clearErrors,
-  render,
   renderRssLists,
   appendText,
 };

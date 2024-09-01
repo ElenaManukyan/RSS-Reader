@@ -8,15 +8,9 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import resources from './locales.js';
-import state from './state.js';
-import { renderRssLists, appendText } from './view.js';
+import { renderRssLists, appendText, renderErrors, clearErrors } from './view.js';
 
 const i18nextInstance = i18n.createInstance();
-await i18nextInstance.init({
-  lng: 'ru',
-  debug: true,
-  resources,
-});
 
 const elements = {
   modalTitle: document.querySelector('.modal-title'),
@@ -36,6 +30,40 @@ const elements = {
   btnSecondary: document.querySelector('.btn-secondary'),
   title: document.querySelector('title'),
 };
+
+const app = async () => {
+  await i18nextInstance.init({
+    lng: 'ru',
+    debug: true,
+    resources,
+  });
+
+  appendText(elements);
+
+  const state = {
+    currentLocale: 'ru',
+    rssForm: {
+      stateForm: 'filling',
+      isValid: false,
+      errors: {},
+      data: {
+        fields: {
+          activeUrl: '',
+        },
+        touchedFields: {
+          url: false,
+        },
+        rssUrls: [],
+        activeRssUrlsData: [],
+        clickedListElements: new Set(),
+      },
+    },
+  };
+
+  return state;
+};
+
+const state = await app();
 
 const getUrlWithProxy = (url) => {
   const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
@@ -84,12 +112,20 @@ function renderingTextModal(fData, btnId) {
   clickedListElement.style = 'color: #6c757d';
 }
 
-const watchedState = onChange(state, () => {
-  import('./view.js')
-    .then((module) => {
-      const { render } = module;
-      render();
-    });
+const watchedState = onChange(state, (path, value) => {
+  console.log(`path= ${path}`);
+  console.log(`value= ${JSON.stringify(value, null, 2)}`);
+  if (path === 'rssForm.isValid') {
+    if (value === false) {
+      renderErrors(state.rssForm.errors);
+    } else {
+      clearErrors();
+    }
+  }
+  if (path === 'rssForm.errors') {
+    renderErrors(state.rssForm.errors);
+    // renderErrors(value);
+  }
 });
 
 const dataParser = (data) => {
@@ -156,7 +192,7 @@ function checkEvenRssStream() {
               currentItem.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
               state.rssForm.data.activeRssUrlsData.push(currentItem);
             });
-            renderRssLists(state.rssForm.data.activeRssUrlsData);
+            renderRssLists(state.rssForm.data.activeRssUrlsData, state);
           }
         }
       })
@@ -191,10 +227,14 @@ const handler = async () => {
       const result = isRSSUrl(data1);
       return result;
     })
-    .then(() => {
-      watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
-      watchedState.rssForm.isValid = true;
-      repeat();
+    .then((data2) => {
+      if (data2) {
+        watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
+        watchedState.rssForm.isValid = true;
+        repeat();
+      } else {
+        watchedState.rssForm.isValid = false;
+      }
     })
     .catch((error) => {
       watchedState.rssForm.errors = error;
@@ -243,8 +283,6 @@ function repeatCheck() {
   checkInternetConnection();
   setTimeout(repeatCheck, 1000);
 }
-
-appendText(elements);
 
 document.addEventListener('DOMContentLoaded', () => {
   const { rssForm } = elements;
