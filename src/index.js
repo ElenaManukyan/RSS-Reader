@@ -12,21 +12,6 @@ import {
   renderRssLists, appendText, renderErrors, clearErrors,
 } from './view.js';
 
-function renderingTextModal(fData, btnId) {
-  elements.modalTitle.textContent = fData.title;
-  elements.modalBody.textContent = fData.description;
-  elements.fullArticle.setAttribute('href', `${fData.link}`);
-  const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
-  clickedListElement.classList.remove('fw-bold');
-  clickedListElement.classList.add('fw-normal');
-  clickedListElement.style = 'color: #6c757d';
-}
-
-function repeatCheck() {
-  checkInternetConnection();
-  setTimeout(repeatCheck, 1000);
-}
-
 const app = async () => {
   const i18nextInstance = i18n.createInstance();
   const elements = {
@@ -100,6 +85,80 @@ const {
   state, i18nextInstance, elements, watchedState,
 } = await app();
 
+function renderingTextModal(fData, btnId) {
+  elements.modalTitle.textContent = fData.title;
+  elements.modalBody.textContent = fData.description;
+  elements.fullArticle.setAttribute('href', `${fData.link}`);
+  const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
+  clickedListElement.classList.remove('fw-bold');
+  clickedListElement.classList.add('fw-normal');
+  clickedListElement.style = 'color: #6c757d';
+}
+let isOnline = true;
+
+const checkInternetConnection = () => {
+  axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl))
+    .then(() => {
+      if (!isOnline) {
+        isOnline = true;
+        hiddeNetworkError();
+      }
+    })
+    .catch(() => {
+      if (isOnline) {
+        isOnline = false;
+        showNetworkError();
+      }
+    });
+};
+
+function repeatCheck() {
+  checkInternetConnection();
+  setTimeout(repeatCheck, 1000);
+}
+
+function repeat() {
+  checkEvenRssStream();
+  setTimeout(repeat, 5000);
+}
+
+const isRSSUrl = (rawData) => {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(rawData.data.contents, 'application/xml');
+  if (xmlDoc.getElementsByTagName('rss').length > 0) {
+    return xmlDoc;
+  }
+  const error = new Error();
+  error.type = 'noRSS';
+  throw error;
+};
+
+const getUrlWithProxy = (url) => {
+  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  urlWithProxy.searchParams.set('url', url);
+  return urlWithProxy.toString();
+};
+
+const createSchema = (rssUrls) => yup.object().shape({
+  activeUrl: yup
+    .string()
+    .url(i18nextInstance.t('invalidUrl'))
+    .required()
+    .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`),
+});
+
+const validate = async (fields, rssUrls) => {
+  const schema = createSchema(rssUrls);
+  try {
+    await schema.validate(fields, { abortEarly: false });
+    return {};
+  } catch (e) {
+    const errors = keyBy(e.inner, 'path');
+    throw errors;
+  }
+};
+
 const handler = async () => {
   const { urlInput } = elements;
   const { value, name } = urlInput;
@@ -168,61 +227,6 @@ elements.posts.addEventListener('click', (event) => {
     renderingTextModal(fD, btnId);
   }
 });
-
-const getUrlWithProxy = (url) => {
-  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
-  urlWithProxy.searchParams.set('disableCache', 'true');
-  urlWithProxy.searchParams.set('url', url);
-  return urlWithProxy.toString();
-};
-
-let isOnline = true;
-
-const checkInternetConnection = () => {
-  axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl))
-    .then(() => {
-      if (!isOnline) {
-        isOnline = true;
-        hiddeNetworkError();
-      }
-    })
-    .catch(() => {
-      if (isOnline) {
-        isOnline = false;
-        showNetworkError();
-      }
-    });
-};
-
-const isRSSUrl = (rawData) => {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(rawData.data.contents, 'application/xml');
-  if (xmlDoc.getElementsByTagName('rss').length > 0) {
-    return xmlDoc;
-  }
-  const error = new Error();
-  error.type = 'noRSS';
-  throw error;
-};
-
-const createSchema = (rssUrls) => yup.object().shape({
-  activeUrl: yup
-    .string()
-    .url(i18nextInstance.t('invalidUrl'))
-    .required()
-    .notOneOf(rssUrls, `${i18nextInstance.t('notOneOf')}`),
-});
-
-const validate = async (fields, rssUrls) => {
-  const schema = createSchema(rssUrls);
-  try {
-    await schema.validate(fields, { abortEarly: false });
-    return {};
-  } catch (e) {
-    const errors = keyBy(e.inner, 'path');
-    throw errors;
-  }
-};
 
 const dataParser = (data) => {
   const parser = new DOMParser();
@@ -299,11 +303,6 @@ function checkEvenRssStream() {
         }
       });
   });
-}
-
-function repeat() {
-  checkEvenRssStream();
-  setTimeout(repeat, 5000);
 }
 
 // Функция для обработки всех новых элементов в узле
