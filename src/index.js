@@ -12,44 +12,18 @@ import {
   renderRssLists, appendText, renderErrors, clearErrors,
 } from './view.js';
 
-const showNetworkError = () => {
-  const error = new Error('Network error!');
-  error.type = 'networkError';
-  watchedState.rssForm.errors = error;
-  watchedState.rssForm.isValid = false;
-};
-
-const hiddeNetworkError = () => {
-  watchedState.rssForm.isValid = true;
-};
-
-let isOnline = true;
-
-const checkInternetConnection = () => {
-  axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl))
-    .then(() => {
-      if (!isOnline) {
-        isOnline = true;
-        hiddeNetworkError();
-      }
-    })
-    .catch(() => {
-      if (isOnline) {
-        isOnline = false;
-        showNetworkError();
-      }
-    });
-};
-
-function repeatCheck() {
-  checkInternetConnection();
-  setTimeout(repeatCheck, 1000);
+function renderingTextModal(fData, btnId) {
+  elements.modalTitle.textContent = fData.title;
+  elements.modalBody.textContent = fData.description;
+  elements.fullArticle.setAttribute('href', `${fData.link}`);
+  const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
+  clickedListElement.classList.remove('fw-bold');
+  clickedListElement.classList.add('fw-normal');
+  clickedListElement.style = 'color: #6c757d';
 }
 
 const app = async () => {
-
   const i18nextInstance = i18n.createInstance();
-
   const elements = {
     modalTitle: document.querySelector('.modal-title'),
     modalBody: document.querySelector('.modal-body'),
@@ -143,6 +117,40 @@ const app = async () => {
 
 const { state, i18nextInstance, elements, watchedState } = await app();
 
+const showNetworkError = () => {
+  const error = new Error('Network error!');
+  error.type = 'networkError';
+  watchedState.rssForm.errors = error;
+  watchedState.rssForm.isValid = false;
+};
+
+const hiddeNetworkError = () => {
+  watchedState.rssForm.isValid = true;
+};
+
+let isOnline = true;
+
+const checkInternetConnection = () => {
+  axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl))
+    .then(() => {
+      if (!isOnline) {
+        isOnline = true;
+        hiddeNetworkError();
+      }
+    })
+    .catch(() => {
+      if (isOnline) {
+        isOnline = false;
+        showNetworkError();
+      }
+    });
+};
+
+function repeatCheck() {
+  checkInternetConnection();
+  setTimeout(repeatCheck, 1000);
+}
+
 const getUrlWithProxy = (url) => {
   const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
   urlWithProxy.searchParams.set('disableCache', 'true');
@@ -179,16 +187,6 @@ const validate = async (fields, rssUrls) => {
     throw errors;
   }
 };
-
-function renderingTextModal(fData, btnId) {
-  elements.modalTitle.textContent = fData.title;
-  elements.modalBody.textContent = fData.description;
-  elements.fullArticle.setAttribute('href', `${fData.link}`);
-  const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
-  clickedListElement.classList.remove('fw-bold');
-  clickedListElement.classList.add('fw-normal');
-  clickedListElement.style = 'color: #6c757d';
-}
 
 const dataParser = (data) => {
   const parser = new DOMParser();
