@@ -17,14 +17,19 @@ const renderErrors = (errors, i18nextInstance) => {
     input.classList.add('is-invalid');
     errorP.textContent = i18nextInstance.t('isNetworkError');
     errorP.classList.add('text-danger');
-  } else if (errors.type === 'noRSS') {
-    input.classList.add('is-invalid');
-    errorP.textContent = i18nextInstance.t('notValidRSS');
-    errorP.classList.add('text-danger');
-  } else if (errors.type === 'networkError') {
-    input.classList.add('is-invalid');
-    errorP.textContent = i18nextInstance.t('isNetworkError');
-    errorP.classList.add('text-danger');
+  } else {
+    switch(errors.type) {
+      case 'noRSS':
+        input.classList.add('is-invalid');
+        errorP.textContent = i18nextInstance.t('notValidRSS');
+        errorP.classList.add('text-danger');
+        break;
+      case 'networkError':
+        input.classList.add('is-invalid');
+        errorP.textContent = i18nextInstance.t('isNetworkError');
+        errorP.classList.add('text-danger');
+        break;
+    }
   }
 };
 
