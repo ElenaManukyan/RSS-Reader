@@ -1,16 +1,6 @@
-import i18n from 'i18next';
 import _ from 'lodash';
-import resources from './locales.js';
 
-// Locales
-const i18nextInstance = i18n.createInstance();
-await i18nextInstance.init({
-  lng: 'ru',
-  debug: true,
-  resources,
-});
-
-const renderErrors = (errors) => {
+const renderErrors = (errors, i18nextInstance) => {
   const errorP = document.querySelector('.feedback');
   const input = document.querySelector('#url-input');
   input.classList.remove('is-invalid');
@@ -38,7 +28,7 @@ const renderErrors = (errors) => {
   }
 };
 
-const clearErrors = () => {
+const clearErrors = (i18nextInstance) => {
   const errorMessage = document.querySelector('.feedback');
   errorMessage.textContent = `${i18nextInstance.t('successRSS')}`;
   const invalidInputs = document.querySelectorAll('.is-invalid');
@@ -51,7 +41,7 @@ const clearErrors = () => {
 };
 
 // Render RSS lists
-function renderRssLists(rsses, state) {
+function renderRssLists(rsses, state, i18nextInstance) {
   document.querySelector('.posts').innerHTML = '';
   document.querySelector('.feeds').innerHTML = '';
   const divCard = document.createElement('div');
@@ -120,7 +110,7 @@ function renderRssLists(rsses, state) {
 }
 
 // Locales
-function appendText(elements) {
+function appendText(elements, i18nextInstance) {
   const currentElements = _.cloneDeep(elements);
   currentElements.h1RuName.textContent = i18nextInstance.t('h1RuName');
   currentElements.leadP.textContent = i18nextInstance.t('leadP');
