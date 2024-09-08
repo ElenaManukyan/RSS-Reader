@@ -22,6 +22,43 @@ function renderingTextModal(fData, btnId) {
   clickedListElement.style = 'color: #6c757d';
 }
 
+function repeatCheck() {
+  checkInternetConnection();
+  setTimeout(repeatCheck, 1000);
+}
+
+const handler = async () => {
+  const { urlInput } = elements;
+  const { value, name } = urlInput;
+  watchedState.rssForm.data.fields.activeUrl = value;
+  watchedState.rssForm.data.touchedFields[name] = true;
+  validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
+    .then(async (data0) => {
+      if (!Object.keys(data0).length === 0) {
+        throw data0;
+      }
+      const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
+      return response;
+    })
+    .then(async (data1) => {
+      const result = isRSSUrl(data1);
+      return result;
+    })
+    .then((data2) => {
+      if (data2) {
+        watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
+        watchedState.rssForm.isValid = true;
+        repeat();
+      } else {
+        watchedState.rssForm.isValid = false;
+      }
+    })
+    .catch((error) => {
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+    });
+};
+
 const app = async () => {
   const i18nextInstance = i18n.createInstance();
   const elements = {
@@ -102,7 +139,7 @@ const app = async () => {
       repeatCheck();
     });
   });
-  
+
   elements.posts.addEventListener('click', (event) => {
     if (event.target.classList.contains('btn-sm')) {
       const btnId = Number(event.target.getAttribute('data-id'));
@@ -112,10 +149,14 @@ const app = async () => {
     }
   });
 
-  return { state, i18nextInstance, elements, watchedState };
+  return {
+    state, i18nextInstance, elements, watchedState
+  };
 };
 
-const { state, i18nextInstance, elements, watchedState } = await app();
+const {
+  state, i18nextInstance, elements, watchedState
+} = await app();
 
 const showNetworkError = () => {
   const error = new Error('Network error!');
@@ -126,6 +167,13 @@ const showNetworkError = () => {
 
 const hiddeNetworkError = () => {
   watchedState.rssForm.isValid = true;
+};
+
+const getUrlWithProxy = (url) => {
+  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  urlWithProxy.searchParams.set('url', url);
+  return urlWithProxy.toString();
 };
 
 let isOnline = true;
@@ -144,18 +192,6 @@ const checkInternetConnection = () => {
         showNetworkError();
       }
     });
-};
-
-function repeatCheck() {
-  checkInternetConnection();
-  setTimeout(repeatCheck, 1000);
-}
-
-const getUrlWithProxy = (url) => {
-  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
-  urlWithProxy.searchParams.set('disableCache', 'true');
-  urlWithProxy.searchParams.set('url', url);
-  return urlWithProxy.toString();
 };
 
 const isRSSUrl = (rawData) => {
@@ -269,38 +305,6 @@ function repeat() {
   checkEvenRssStream();
   setTimeout(repeat, 5000);
 }
-
-const handler = async () => {
-  const { urlInput } = elements;
-  const { value, name } = urlInput;
-  watchedState.rssForm.data.fields.activeUrl = value;
-  watchedState.rssForm.data.touchedFields[name] = true;
-  validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-    .then(async (data0) => {
-      if (!Object.keys(data0).length === 0) {
-        throw data0;
-      }
-      const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
-      return response;
-    })
-    .then(async (data1) => {
-      const result = isRSSUrl(data1);
-      return result;
-    })
-    .then((data2) => {
-      if (data2) {
-        watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
-        watchedState.rssForm.isValid = true;
-        repeat();
-      } else {
-        watchedState.rssForm.isValid = false;
-      }
-    })
-    .catch((error) => {
-      watchedState.rssForm.errors = error;
-      watchedState.rssForm.isValid = false;
-    });
-};
 
 // Функция для обработки всех новых элементов в узле
 function handleNewElements(node) {
