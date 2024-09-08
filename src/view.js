@@ -128,17 +128,18 @@ function appendText(elements, i18nextInstance) {
 }
 
 // function renderingTextModal(fData, btnId) {
-  function renderingTextModal(fData, btnIds, elements) {
-    elements.modalTitle.textContent = fData.title;
-    elements.modalBody.textContent = fData.description;
-    elements.fullArticle.setAttribute('href', `${fData.link}`);
-    btnIds.forEach((btnId) => {
-      const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
-      clickedListElement.classList.remove('fw-bold');
-      clickedListElement.classList.add('fw-normal');
-      clickedListElement.style = 'color: #6c757d';
-    });
-  }
+function renderingTextModal(fData, btnIds, elements) {
+  const currentElements = _.cloneDeep(elements);
+  currentElements.modalTitle.textContent = fData.title;
+  currentElements.modalBody.textContent = fData.description;
+  currentElements.fullArticle.setAttribute('href', `${fData.link}`);
+  btnIds.forEach((btnId) => {
+    const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
+    clickedListElement.classList.remove('fw-bold');
+    clickedListElement.classList.add('fw-normal');
+    clickedListElement.style = 'color: #6c757d';
+  });
+}
 
 export {
   renderErrors,

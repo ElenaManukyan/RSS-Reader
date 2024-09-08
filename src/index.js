@@ -78,8 +78,8 @@ const app = async () => {
       }
     }
     if (path === 'rssForm.data.clickedListElements') {
-      const fD = state.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === state.rssForm.data.currentClickedListElement);
-      console.log(`fD= ${JSON.stringify(fD, null, 2)}`);
+      const currClickId = state.rssForm.data.currentClickedListElement;
+      const fD = state.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === currClickId);
       renderingTextModal(fD[0], value, elements);
     }
   });
@@ -137,7 +137,7 @@ function repeatCheck() {
 const dataParser = (data) => {
   const parser = new DOMParser();
   const feedData = parser.parseFromString(data, 'text/xml');
-  const parseerrors = feedData.querySelector('parsererror'); // +
+  const parseerrors = feedData.querySelector('parsererror');
   if (parseerrors !== null) {
     const error = parseerrors.textContent;
     throw new Error(error);
