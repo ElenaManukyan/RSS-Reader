@@ -30,7 +30,7 @@ const renderErrors = (errors, i18nextInstance) => {
         errorP.classList.add('text-danger');
         break;
       default:
-        throw new Error("Неизвестная ошибка");  
+        throw new Error('Неизвестная ошибка');
     }
   }
 };
