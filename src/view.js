@@ -127,9 +127,23 @@ function appendText(elements, i18nextInstance) {
   currentElements.title = i18nextInstance.t('title');
 }
 
+// function renderingTextModal(fData, btnId) {
+  function renderingTextModal(fData, btnIds, elements) {
+    elements.modalTitle.textContent = fData.title;
+    elements.modalBody.textContent = fData.description;
+    elements.fullArticle.setAttribute('href', `${fData.link}`);
+    btnIds.forEach((btnId) => {
+      const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
+      clickedListElement.classList.remove('fw-bold');
+      clickedListElement.classList.add('fw-normal');
+      clickedListElement.style = 'color: #6c757d';
+    });
+  }
+
 export {
   renderErrors,
   clearErrors,
   renderRssLists,
   appendText,
+  renderingTextModal,
 };

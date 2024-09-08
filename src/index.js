@@ -8,7 +8,7 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import resources from './locales.js';
 import {
-  renderRssLists, appendText, renderErrors, clearErrors,
+  renderRssLists, appendText, renderErrors, clearErrors, renderingTextModal,
 } from './view.js';
 
 const app = async () => {
@@ -56,14 +56,12 @@ const app = async () => {
         rssUrls: [],
         activeRssUrlsData: [],
         clickedListElements: new Set(),
+        currentClickedListElement: '',
       },
     },
   };
 
   const watchedState = onChange(state, (path, value) => {
-    //console.log(`path= ${path}`);
-    //console.log(`value= ${JSON.stringify(value, null, 2)}`);
-    //console.log(`state= ${JSON.stringify(state, null, 2)}`);
     if (path === 'rssForm.isValid') {
       if (value === false) {
         renderErrors(state.rssForm.errors, i18nextInstance);
@@ -76,9 +74,13 @@ const app = async () => {
     }
     if (path === 'rssForm.data.activeRssUrlsData') {
       if (value.length !== 0) {
-        //console.log('watchedState is working!');
         renderRssLists(value, state, i18nextInstance);
       }
+    }
+    if (path === 'rssForm.data.clickedListElements') {
+      const fD = state.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === state.rssForm.data.currentClickedListElement);
+      console.log(`fD= ${JSON.stringify(fD, null, 2)}`);
+      renderingTextModal(fD[0], value, elements);
     }
   });
 
@@ -90,16 +92,6 @@ const app = async () => {
 const {
   state, i18nextInstance, elements, watchedState,
 } = await app();
-
-function renderingTextModal(fData, btnId) {
-  elements.modalTitle.textContent = fData.title;
-  elements.modalBody.textContent = fData.description;
-  elements.fullArticle.setAttribute('href', `${fData.link}`);
-  const clickedListElement = document.querySelector(`.list-group-item [data-id="${String(btnId)}"]`);
-  clickedListElement.classList.remove('fw-bold');
-  clickedListElement.classList.add('fw-normal');
-  clickedListElement.style = 'color: #6c757d';
-}
 
 const showNetworkError = () => {
   const error = new Error('Network error!');
@@ -310,9 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
 elements.posts.addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
     const btnId = event.target.getAttribute('data-id');
-    const fD = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];
+    watchedState.rssForm.data.currentClickedListElement = btnId;
     watchedState.rssForm.data.clickedListElements.add(btnId);
-    renderingTextModal(fD, btnId);
   }
 });
 
