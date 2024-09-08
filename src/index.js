@@ -6,7 +6,6 @@ import onChange from 'on-change';
 import i18n from 'i18next';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import _ from 'lodash';
 import resources from './locales.js';
 import {
   renderRssLists, appendText, renderErrors, clearErrors,
