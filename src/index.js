@@ -123,40 +123,40 @@ const app = async () => {
     }
   });
 
-  window.addEventListener('online', () => {
-    hiddeNetworkError(); // Hide message about network error
-  });
-  
-  window.addEventListener('offline', () => {
-    showNetworkError(); // Show message about network error
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const { rssForm } = elements;
-    rssForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      await handler();
-      repeatCheck();
-    });
-  });
-
-  elements.posts.addEventListener('click', (event) => {
-    if (event.target.classList.contains('btn-sm')) {
-      const btnId = Number(event.target.getAttribute('data-id'));
-      const fD = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];
-      watchedState.rssForm.data.clickedListElements.add(btnId);
-      renderingTextModal(fD, btnId);
-    }
-  });
-
   return {
-    state, i18nextInstance, elements, watchedState
+    state, i18nextInstance, elements, watchedState,
   };
 };
 
 const {
-  state, i18nextInstance, elements, watchedState
+  state, i18nextInstance, elements, watchedState,
 } = await app();
+
+window.addEventListener('online', () => {
+  hiddeNetworkError(); // Hide message about network error
+});
+
+window.addEventListener('offline', () => {
+  showNetworkError(); // Show message about network error
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const { rssForm } = elements;
+  rssForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    await handler();
+    repeatCheck();
+  });
+});
+
+elements.posts.addEventListener('click', (event) => {
+  if (event.target.classList.contains('btn-sm')) {
+    const btnId = Number(event.target.getAttribute('data-id'));
+    const fD = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];
+    watchedState.rssForm.data.clickedListElements.add(btnId);
+    renderingTextModal(fD, btnId);
+  }
+});
 
 const showNetworkError = () => {
   const error = new Error('Network error!');
