@@ -27,38 +27,6 @@ function repeatCheck() {
   setTimeout(repeatCheck, 1000);
 }
 
-const handler = async () => {
-  const { urlInput } = elements;
-  const { value, name } = urlInput;
-  watchedState.rssForm.data.fields.activeUrl = value;
-  watchedState.rssForm.data.touchedFields[name] = true;
-  validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
-    .then(async (data0) => {
-      if (!Object.keys(data0).length === 0) {
-        throw data0;
-      }
-      const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
-      return response;
-    })
-    .then(async (data1) => {
-      const result = isRSSUrl(data1);
-      return result;
-    })
-    .then((data2) => {
-      if (data2) {
-        watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
-        watchedState.rssForm.isValid = true;
-        repeat();
-      } else {
-        watchedState.rssForm.isValid = false;
-      }
-    })
-    .catch((error) => {
-      watchedState.rssForm.errors = error;
-      watchedState.rssForm.isValid = false;
-    });
-};
-
 const app = async () => {
   const i18nextInstance = i18n.createInstance();
   const elements = {
@@ -132,6 +100,49 @@ const {
   state, i18nextInstance, elements, watchedState,
 } = await app();
 
+const handler = async () => {
+  const { urlInput } = elements;
+  const { value, name } = urlInput;
+  watchedState.rssForm.data.fields.activeUrl = value;
+  watchedState.rssForm.data.touchedFields[name] = true;
+  validate(watchedState.rssForm.data.fields, watchedState.rssForm.data.rssUrls)
+    .then(async (data0) => {
+      if (!Object.keys(data0).length === 0) {
+        throw data0;
+      }
+      const response = await axios.get(getUrlWithProxy(watchedState.rssForm.data.fields.activeUrl));
+      return response;
+    })
+    .then(async (data1) => {
+      const result = isRSSUrl(data1);
+      return result;
+    })
+    .then((data2) => {
+      if (data2) {
+        watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
+        watchedState.rssForm.isValid = true;
+        repeat();
+      } else {
+        watchedState.rssForm.isValid = false;
+      }
+    })
+    .catch((error) => {
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+    });
+};
+
+const showNetworkError = () => {
+  const error = new Error('Network error!');
+  error.type = 'networkError';
+  watchedState.rssForm.errors = error;
+  watchedState.rssForm.isValid = false;
+};
+
+const hiddeNetworkError = () => {
+  watchedState.rssForm.isValid = true;
+};
+
 window.addEventListener('online', () => {
   hiddeNetworkError(); // Hide message about network error
 });
@@ -157,17 +168,6 @@ elements.posts.addEventListener('click', (event) => {
     renderingTextModal(fD, btnId);
   }
 });
-
-const showNetworkError = () => {
-  const error = new Error('Network error!');
-  error.type = 'networkError';
-  watchedState.rssForm.errors = error;
-  watchedState.rssForm.isValid = false;
-};
-
-const hiddeNetworkError = () => {
-  watchedState.rssForm.isValid = true;
-};
 
 const getUrlWithProxy = (url) => {
   const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
