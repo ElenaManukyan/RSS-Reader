@@ -94,6 +94,25 @@ function renderingTextModal(fData, btnId) {
   clickedListElement.classList.add('fw-normal');
   clickedListElement.style = 'color: #6c757d';
 }
+
+const showNetworkError = () => {
+  const error = new Error('Network error!');
+  error.type = 'networkError';
+  watchedState.rssForm.errors = error;
+  watchedState.rssForm.isValid = false;
+};
+
+const hiddeNetworkError = () => {
+  watchedState.rssForm.isValid = true;
+};
+
+const getUrlWithProxy = (url) => {
+  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
+  urlWithProxy.searchParams.set('disableCache', 'true');
+  urlWithProxy.searchParams.set('url', url);
+  return urlWithProxy.toString();
+};
+
 let isOnline = true;
 
 const checkInternetConnection = () => {
@@ -117,6 +136,35 @@ function repeatCheck() {
   setTimeout(repeatCheck, 1000);
 }
 
+// Проверяю каждый RSS-поток
+function checkEvenRssStream() {
+  const allRssStreams = state.rssForm.data.rssUrls;
+  allRssStreams.forEach((RssStream) => {
+    getRSS(RssStream)
+      .then((d) => {
+        if (d) {
+          const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
+          const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
+          const filt = d.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
+          if (filt.length > 0) {
+            filt.forEach((item) => {
+              const currentItem = _.cloneDeep(item);
+              currentItem.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
+              state.rssForm.data.activeRssUrlsData.push(currentItem);
+            });
+            renderRssLists(state.rssForm.data.activeRssUrlsData, state, i18nextInstance);
+          }
+        }
+      })
+      .catch((error) => {
+        if (error.message === 'Network Error') {
+          watchedState.rssForm.errors = error;
+          watchedState.rssForm.isValid = false;
+        }
+      });
+  });
+}
+
 function repeat() {
   checkEvenRssStream();
   setTimeout(repeat, 5000);
@@ -131,13 +179,6 @@ const isRSSUrl = (rawData) => {
   const error = new Error();
   error.type = 'noRSS';
   throw error;
-};
-
-const getUrlWithProxy = (url) => {
-  const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
-  urlWithProxy.searchParams.set('disableCache', 'true');
-  urlWithProxy.searchParams.set('url', url);
-  return urlWithProxy.toString();
 };
 
 const createSchema = (rssUrls) => yup.object().shape({
@@ -189,17 +230,6 @@ const handler = async () => {
       watchedState.rssForm.errors = error;
       watchedState.rssForm.isValid = false;
     });
-};
-
-const showNetworkError = () => {
-  const error = new Error('Network error!');
-  error.type = 'networkError';
-  watchedState.rssForm.errors = error;
-  watchedState.rssForm.isValid = false;
-};
-
-const hiddeNetworkError = () => {
-  watchedState.rssForm.isValid = true;
 };
 
 window.addEventListener('online', () => {
@@ -275,35 +305,6 @@ const getRSS = async (url) => {
     return false;
   }
 };
-
-// Проверяю каждый RSS-поток
-function checkEvenRssStream() {
-  const allRssStreams = state.rssForm.data.rssUrls;
-  allRssStreams.forEach((RssStream) => {
-    getRSS(RssStream)
-      .then((d) => {
-        if (d) {
-          const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
-          const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
-          const filt = d.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
-          if (filt.length > 0) {
-            filt.forEach((item) => {
-              const currentItem = _.cloneDeep(item);
-              currentItem.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
-              state.rssForm.data.activeRssUrlsData.push(currentItem);
-            });
-            renderRssLists(state.rssForm.data.activeRssUrlsData, state, i18nextInstance);
-          }
-        }
-      })
-      .catch((error) => {
-        if (error.message === 'Network Error') {
-          watchedState.rssForm.errors = error;
-          watchedState.rssForm.isValid = false;
-        }
-      });
-  });
-}
 
 // Функция для обработки всех новых элементов в узле
 function handleNewElements(node) {
