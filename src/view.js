@@ -18,7 +18,7 @@ const renderErrors = (errors, i18nextInstance) => {
     errorP.textContent = i18nextInstance.t('isNetworkError');
     errorP.classList.add('text-danger');
   } else {
-    switch(errors.type) {
+    switch (errors.type) {
       case 'noRSS':
         input.classList.add('is-invalid');
         errorP.textContent = i18nextInstance.t('notValidRSS');
@@ -29,6 +29,8 @@ const renderErrors = (errors, i18nextInstance) => {
         errorP.textContent = i18nextInstance.t('isNetworkError');
         errorP.classList.add('text-danger');
         break;
+      default:
+        throw new Error("Неизвестная ошибка");  
     }
   }
 };
