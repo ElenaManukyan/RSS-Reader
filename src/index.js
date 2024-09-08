@@ -64,6 +64,7 @@ const app = async () => {
   const watchedState = onChange(state, (path, value) => {
     console.log(`path= ${path}`);
     console.log(`value= ${JSON.stringify(value, null, 2)}`);
+    console.log(`state= ${JSON.stringify(state, null, 2)}`);
     if (path === 'rssForm.isValid') {
       if (value === false) {
         renderErrors(state.rssForm.errors, i18nextInstance);
@@ -73,6 +74,12 @@ const app = async () => {
     }
     if (path === 'rssForm.errors') {
       renderErrors(state.rssForm.errors, i18nextInstance);
+    }
+    if (path === 'rssForm.data.activeRssUrlsData') {
+      if (value.length !== 0) {
+        console.log('watchedState is working!');
+        renderRssLists(value, state, i18nextInstance);
+      }
     }
   });
 
@@ -136,6 +143,16 @@ function repeatCheck() {
   setTimeout(repeatCheck, 1000);
 }
 
+const dataParser = (data) => {
+  const parser = new DOMParser();
+  const feedData = parser.parseFromString(data, 'text/xml');
+  const parseerrors = feedData.querySelector('parsererror'); // +
+  if (parseerrors !== null) {
+    const error = parseerrors.textContent;
+    throw new Error(error);
+  }
+};
+
 // Get RSS stream
 const getRSS = async (url) => {
   try {
@@ -185,12 +202,10 @@ function checkEvenRssStream() {
           const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
           const filt = d.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
           if (filt.length > 0) {
-            filt.forEach((item) => {
-              const currentItem = _.cloneDeep(item);
-              currentItem.itemsId = (state.rssForm.data.activeRssUrlsData.length - 1) + 1;
-              state.rssForm.data.activeRssUrlsData.push(currentItem);
-            });
-            renderRssLists(state.rssForm.data.activeRssUrlsData, state, i18nextInstance);
+            watchedState.rssForm.data.activeRssUrlsData = [
+              ...watchedState.rssForm.data.activeRssUrlsData,
+              ...filt,
+            ];
           }
         }
       })
@@ -257,6 +272,12 @@ const handler = async () => {
     })
     .then((data2) => {
       if (data2) {
+        /*
+        watchedState.rssForm.data.rssUrls = [
+          ...state.rssForm.data.rssUrls,
+          watchedState.rssForm.data.fields.activeUrl,
+        ];
+        */
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
         watchedState.rssForm.isValid = true;
         repeat();
@@ -295,16 +316,6 @@ elements.posts.addEventListener('click', (event) => {
     renderingTextModal(fD, btnId);
   }
 });
-
-const dataParser = (data) => {
-  const parser = new DOMParser();
-  const feedData = parser.parseFromString(data, 'text/xml');
-  const parseerrors = feedData.querySelector('parsererror'); // +
-  if (parseerrors !== null) {
-    const error = parseerrors.textContent;
-    throw new Error(error);
-  }
-};
 
 // Функция для обработки всех новых элементов в узле
 function handleNewElements(node) {
