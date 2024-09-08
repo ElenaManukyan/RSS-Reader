@@ -62,9 +62,9 @@ const app = async () => {
   };
 
   const watchedState = onChange(state, (path, value) => {
-    console.log(`path= ${path}`);
-    console.log(`value= ${JSON.stringify(value, null, 2)}`);
-    console.log(`state= ${JSON.stringify(state, null, 2)}`);
+    //console.log(`path= ${path}`);
+    //console.log(`value= ${JSON.stringify(value, null, 2)}`);
+    //console.log(`state= ${JSON.stringify(state, null, 2)}`);
     if (path === 'rssForm.isValid') {
       if (value === false) {
         renderErrors(state.rssForm.errors, i18nextInstance);
@@ -77,7 +77,7 @@ const app = async () => {
     }
     if (path === 'rssForm.data.activeRssUrlsData') {
       if (value.length !== 0) {
-        console.log('watchedState is working!');
+        //console.log('watchedState is working!');
         renderRssLists(value, state, i18nextInstance);
       }
     }
@@ -193,13 +193,13 @@ const getRSS = async (url) => {
 
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
-  const allRssStreams = state.rssForm.data.rssUrls;
+  const allRssStreams = watchedState.rssForm.data.rssUrls;
   allRssStreams.forEach((RssStream) => {
     getRSS(RssStream)
       .then((d) => {
         if (d) {
-          const titles = state.rssForm.data.activeRssUrlsData.map((item) => item.title);
-          const desc = state.rssForm.data.activeRssUrlsData.map((item) => item.description);
+          const titles = watchedState.rssForm.data.activeRssUrlsData.map((item) => item.title);
+          const desc = watchedState.rssForm.data.activeRssUrlsData.map((item) => item.description);
           const filt = d.filter((i) => !titles.includes(i.title) && !desc.includes(i.description));
           if (filt.length > 0) {
             watchedState.rssForm.data.activeRssUrlsData = [
@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 elements.posts.addEventListener('click', (event) => {
   if (event.target.classList.contains('btn-sm')) {
-    const btnId = Number(event.target.getAttribute('data-id'));
+    const btnId = event.target.getAttribute('data-id');
     const fD = watchedState.rssForm.data.activeRssUrlsData.filter((i) => i.itemsId === btnId)[0];
     watchedState.rssForm.data.clickedListElements.add(btnId);
     renderingTextModal(fD, btnId);
