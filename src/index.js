@@ -136,6 +136,44 @@ function repeatCheck() {
   setTimeout(repeatCheck, 1000);
 }
 
+// Get RSS stream
+const getRSS = async (url) => {
+  try {
+    if (state.rssForm.isValid) {
+      const response = await axios.get(getUrlWithProxy(url));
+      dataParser(response.data.contents);
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
+      const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent; // +
+      const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent; // +
+      const items = xmlDoc.querySelectorAll('item');
+      const rssData = [];
+      let itemsId = uuidv4();
+      rssData.push({ itemsId, mainTitle });
+      itemsId = uuidv4();
+      rssData.push({ itemsId, mainDescription });
+      itemsId = uuidv4();
+      items.forEach((item) => {
+        const title = item.querySelector('title').textContent;
+        const description = item.querySelector('description').textContent;
+        const link = item.querySelector('link').textContent;
+        rssData.push({
+          itemsId, title, description, link,
+        });
+        itemsId = uuidv4();
+      });
+      return rssData;
+    }
+    return false;
+  } catch (error) {
+    if (error.message === 'Network Error') {
+      watchedState.rssForm.errors = error;
+      watchedState.rssForm.isValid = false;
+    }
+    return false;
+  }
+};
+
 // Проверяю каждый RSS-поток
 function checkEvenRssStream() {
   const allRssStreams = state.rssForm.data.rssUrls;
@@ -265,44 +303,6 @@ const dataParser = (data) => {
   if (parseerrors !== null) {
     const error = parseerrors.textContent;
     throw new Error(error);
-  }
-};
-
-// Get RSS stream
-const getRSS = async (url) => {
-  try {
-    if (state.rssForm.isValid) {
-      const response = await axios.get(getUrlWithProxy(url));
-      dataParser(response.data.contents);
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
-      const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent; // +
-      const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent; // +
-      const items = xmlDoc.querySelectorAll('item');
-      const rssData = [];
-      let itemsId = uuidv4();
-      rssData.push({ itemsId, mainTitle });
-      itemsId = uuidv4();
-      rssData.push({ itemsId, mainDescription });
-      itemsId = uuidv4();
-      items.forEach((item) => {
-        const title = item.querySelector('title').textContent;
-        const description = item.querySelector('description').textContent;
-        const link = item.querySelector('link').textContent;
-        rssData.push({
-          itemsId, title, description, link,
-        });
-        itemsId = uuidv4();
-      });
-      return rssData;
-    }
-    return false;
-  } catch (error) {
-    if (error.message === 'Network Error') {
-      watchedState.rssForm.errors = error;
-      watchedState.rssForm.isValid = false;
-    }
-    return false;
   }
 };
 
