@@ -148,27 +148,36 @@ const dataParser = (data) => {
 const getRSS = async (url) => {
   try {
     if (state.rssForm.isValid) {
+      //console.log(`getUrlWithProxy(url)= ${getUrlWithProxy(url)}`);
       const response = await axios.get(getUrlWithProxy(url));
       dataParser(response.data.contents);
+
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(response.data.contents, 'application/xml');
-      const mainTitle = xmlDoc.querySelectorAll('title')[0].textContent; // +
-      const mainDescription = xmlDoc.querySelectorAll('description')[0].textContent; // +
+      
+      const mainTitleElement = xmlDoc.querySelectorAll('title')[0];
+      const mainTitle = mainTitleElement ? mainTitleElement.textContent : 'Без заголовка';
+      const mainDescriptionElement = xmlDoc.querySelectorAll('description')[0];
+      const mainDescription = mainDescriptionElement ? mainDescriptionElement.textContent : 'Описание отсутствует';
+      
       const items = xmlDoc.querySelectorAll('item');
       const rssData = [];
-      let itemsId = uuidv4();
-      rssData.push({ itemsId, mainTitle });
-      itemsId = uuidv4();
-      rssData.push({ itemsId, mainDescription });
-      itemsId = uuidv4();
+      
+      rssData.push({ itemsId: uuidv4(), mainTitle });
+      rssData.push({ itemsId: uuidv4(), mainDescription });
+
       items.forEach((item) => {
-        const title = item.querySelector('title').textContent;
-        const description = item.querySelector('description').textContent;
-        const link = item.querySelector('link').textContent;
+        const titleElement = item.querySelector('title');
+        const descriptionElement = item.querySelector('description');
+        const linkElement = item.querySelector('link');
+
+        const title = titleElement ? titleElement.textContent : 'Без заголовка';
+        const description = descriptionElement ? descriptionElement.textContent : 'Описание отсутствует';
+        const link = linkElement ? linkElement.textContent : '#';
+        
         rssData.push({
-          itemsId, title, description, link,
+          itemsId: uuidv4(), title, description, link,
         });
-        itemsId = uuidv4();
       });
       return rssData;
     }
@@ -263,12 +272,6 @@ const handler = async () => {
     })
     .then((data2) => {
       if (data2) {
-        /*
-        watchedState.rssForm.data.rssUrls = [
-          ...state.rssForm.data.rssUrls,
-          watchedState.rssForm.data.fields.activeUrl,
-        ];
-        */
         watchedState.rssForm.data.rssUrls.push(watchedState.rssForm.data.fields.activeUrl);
         watchedState.rssForm.isValid = true;
         repeat();
@@ -291,11 +294,12 @@ window.addEventListener('offline', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  const { rssForm } = elements;
+  const { rssForm, urlInput } = elements;
   rssForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     await handler();
     repeatCheck();
+    urlInput.value = '';
   });
 });
 
