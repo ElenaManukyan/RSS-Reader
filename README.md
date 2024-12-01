@@ -56,7 +56,7 @@ This project demonstrates:
 
 * **Run Development Server:**
   ```bash
-  npm start
+  npm run start
 
 * **Watch for File Changes:**
   ```bash
@@ -65,7 +65,7 @@ This project demonstrates:
 ## Usage
 1. Start the application:
    ```bash
-   npm start
+   npm run start
 2. Open ```http://localhost:8080``` in your browser.
 3. Enter an RSS feed URL and click "Добавить"
 4. Read new entries from the added feeds.
