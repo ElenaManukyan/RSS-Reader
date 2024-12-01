@@ -38,7 +38,7 @@ This project demonstrates:
 ## Installation  
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/<your-repository>/rss-reader.git
+   git clone https://github.com/ElenaManukyan/frontend-project-11.git
    cd rss-reader
 
 2. Install dependencies:  
