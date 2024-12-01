@@ -48,21 +48,24 @@ This project demonstrates:
 ## Scripts
 * **Development Build:**
   ```bash
-  npm run build:dev```
+  npm run build:dev
+
 * **Production Build:**
   ```bash
-  npm run build:prod```
+  npm run build:prod
+
 * **Run Development Server:**
   ```bash
-  npm start```
+  npm start
+
 * **Watch for File Changes:**
   ```bash
-  npm run watch```
+  npm run watch
 
 ## Usage
 1. Start the application:
    ```bash
-   npm start```
+   npm start
 2. Open ```http://localhost:8080``` in your browser.
 3. Enter an RSS feed URL and click "Добавить"
 4. Read new entries from the added feeds.
