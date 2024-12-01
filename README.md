@@ -39,10 +39,12 @@ This project demonstrates:
 1. Clone the repository:  
    ```bash
    git clone https://github.com/<your-repository>/rss-reader.git
-   cd rss-reader```
-2. Install dependencies:
+   cd rss-reader
+
+2. Install dependencies:  
    ```bash
-   npm install```
+   npm install
+
 ## Scripts
 * **Development Build:**
   ```bash
