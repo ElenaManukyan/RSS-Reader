@@ -1,5 +1,6 @@
 # RSS Reader
 
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Actions Status](https://github.com/ElenaManukyan/frontend-project-11/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/ElenaManukyan/frontend-project-11/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/d575f795153d8c37a66f/maintainability)](https://codeclimate.com/github/ElenaManukyan/frontend-project-11/maintainability)
 
@@ -69,16 +70,12 @@ cd frontend-project-11
 3. Enter a valid RSS URL and click "Add"("Добавить");
 ## Contributing
 
-We welcome all contributions! Here's how you can help:
+I welcome all contributions! Here's how you can help:
 
-- 🐛 Found a bug? [Open an issue](https://github.com/your/repo/issues)
+- 🐛 Found a bug? [Open an issue]([https://github.com/your/repo/issues](https://github.com/ElenaManukyan/RSS-Reader/issues))
 - 💡 Have a feature request? Let us know
 - ✏️ Want to contribute code? Submit a pull request
-
-For major changes, please open an issue first to discuss your proposed changes.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
