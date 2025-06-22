@@ -1,71 +1,53 @@
 # RSS Reader
 
-## Tests and code analysis:
-[![Actions Status](https://github.com/ElenaManukyan/frontend-project-11/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/ElenaManukyan/frontend-project-11/actions)
-[![Maintainability](https://api.codeclimate.com/v1/badges/d575f795153d8c37a66f/maintainability)](https://codeclimate.com/github/ElenaManukyan/frontend-project-11/maintainability)
-## Demonstration:
-[https://frontend-project-11-chi-snowy.vercel.app/](https://frontend-project-11-delta-brown.vercel.app/)
+[![Actions Status](https://github.com/ElenaManukyan/frontend-project-11/workflows/CI/badge.svg)](https://github.com/ElenaManukyan/frontend-project-11/actions)
+[![Maintainability](https://api.codeclimate.com/v1/badges/<YOUR_BADGE_ID>/maintainability)](https://codeclimate.com/github/ElenaManukyan/frontend-project-11/maintainability)
 
-## Project Description  
-RSS Reader is a web application for aggregating RSS feeds. It allows users to add RSS feeds, automatically update them, and read new entries in a convenient format.  
+🔗 **Live Demo**: [https://frontend-project-11-chi-snowy.vercel.app/](https://frontend-project-11-chi-snowy.vercel.app/)
 
-This project demonstrates:  
-- working with the DOM API;  
-- asynchronous JavaScript (including Promises and error handling);  
-- using AJAX for HTTP requests;  
-- form validation with the Yup library;  
-- implementing MVC architecture for maintainable code;  
-- configuring builds and deployment with Webpack;  
-- localization of the interface with i18next;  
-- integration of popular libraries like Axios and Lodash.  
+## Description
+RSS Reader is a web application for aggregating RSS feeds. It allows users to:
+- Add and manage multiple RSS feeds
+- Automatically update feeds in real-time
+- Read content in a clean, user-friendly interface
 
-## Features  
-- Add RSS feeds with URL validation.  
-- Automatically update feeds and display new entries.  
-- User-friendly interface built with Bootstrap.  
-- Multilingual interface support.  
-- Error messages for invalid feeds or update failures.  
+**Key Technical Highlights**:
+- DOM API manipulation
+- Asynchronous JavaScript (Promises, error handling)
+- AJAX requests via Axios
+- MVC architecture for code organization
+- Form validation with Yup
+- Webpack configuration for builds
+- i18next for localization
+- Integration with popular libraries
 
-## Tech Stack  
-- **Language**: JavaScript (ES6+).  
-- **Build Tool**: Webpack.  
-- **CSS**: Bootstrap and SASS.  
-- **AJAX**: Axios for HTTP requests.  
-- **Validation**: Yup.  
-- **Localization**: i18next.  
-- **Other Libraries**: Lodash, on-change, uuid, rss-parser.  
+## Features
+✅ URL validation for RSS feeds  
+✅ Real-time feed updates  
+✅ Bootstrap-powered responsive UI  
+✅ Multilingual support  
+✅ Detailed error handling  
+✅ Optimized production builds  
 
-## Installation  
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/ElenaManukyan/frontend-project-11.git
-   cd rss-reader
+## Tech Stack
+| Category       | Technologies |
+|----------------|--------------|
+| Core           | JavaScript (ES6+) |
+| Build          | Webpack |
+| Styling        | Bootstrap, SASS |
+| HTTP Client    | Axios |
+| Validation     | Yup |
+| Localization   | i18next |
+| Utilities      | Lodash, on-change, uuid, rss-parser |
 
-2. Install dependencies:  
-   ```bash
+## Installation
+1. Clone the repository:
+```bash
+git clone https://github.com/ElenaManukyan/frontend-project-11.git
+cd frontend-project-11
+```
+2. Install dependencies:
+ ```bash
    npm install
+```
 
-## Scripts
-* **Development Build:**
-  ```bash
-  npm run build:dev
-
-* **Production Build:**
-  ```bash
-  npm run build:prod
-
-* **Run Development Server:**
-  ```bash
-  npm run start
-
-* **Watch for File Changes:**
-  ```bash
-  npm run watch
-
-## Usage
-1. Start the application:
-   ```bash
-   npm run start
-2. Open ```http://localhost:8080``` in your browser.
-3. Enter an RSS feed URL and click "Добавить"
-4. Read new entries from the added feeds.
