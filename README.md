@@ -50,4 +50,35 @@ cd frontend-project-11
  ```bash
    npm install
 ```
+## Available Scripts
 
+| Command               | Description                          |
+|-----------------------|--------------------------------------|
+| `npm run build:dev`   | Development build                    |
+| `npm run build:prod`  | Production-optimized build           |
+| `npm run start`       | Start development server             |
+| `npm run watch`       | Watch mode for development           |
+
+## Usage
+
+1. Start the app:
+   ```bash
+   npm run start
+   ```
+2. Open http://localhost:8080 in your browser;
+3. Enter a valid RSS URL and click "Add"("Добавить");
+## Contributing
+
+We welcome all contributions! Here's how you can help:
+
+- 🐛 Found a bug? [Open an issue](https://github.com/your/repo/issues)
+- 💡 Have a feature request? Let us know
+- ✏️ Want to contribute code? Submit a pull request
+
+For major changes, please open an issue first to discuss your proposed changes.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
